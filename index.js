@@ -54,7 +54,7 @@ app.get('/capsules', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/capsules')
         .then(function (response) {
             // handle success
-            res.json({ data: response.data });
+            return res.render('capsules', { capsules: response.data });
         })
         .catch(function (error) {
             res.json({ message: 'Data not found. Please try again later.' });
