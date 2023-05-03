@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+    <table class="table">
+        <thead>
+        <tr>
+            <th><abbr title="id">ID</abbr></th>
+            <th><abbr title="Serial">Serial</abbr></th>
+            <th>Status</th>
+            <th><abbr title="Type">Type</abbr></th>
+            <th><abbr title="Water-Landings">Water Landings</abbr></th>
+            <th><abbr title="Land-Landings">Land Landings</abbr></th>
+            <th><abbr title="Reuse-Count">Reuse Count</abbr></th>
+            <th><abbr title="Last-Update">Last Update</abbr></th>
+        </tr>
+        </thead>
+    <tfoot>
+        <tr>
+            <th><abbr title="id">ID</abbr></th>
+            <th><abbr title="Serial">Serial</abbr></th>
+            <th>Status</th>
+            <th><abbr title="Type">Type</abbr></th>
+            <th><abbr title="Water-Landings">Water Landings</abbr></th>
+            <th><abbr title="Land-Landings">Land Landings</abbr></th>
+            <th><abbr title="Reuse-Count">Reuse Count</abbr></th>
+            <th><abbr title="Last-Update">Last Update</abbr></th>
+          </tr>
+        </tfoot>
+        <tbody>
+          <% for( let i = 0; i < capsules.length; i++ ) { %>
+            <% let capsule = capsules[i] %>
+            <tr>
+                <th><%= capsule.id %></th>
+                <th><%= capsule.serial %></th>
+                <td><%= capsule.status %></td>
+                <td><%= capsule.type %></td>
+                <td><%= capsule.water_landings %></td>
+                <td><%= capsule.land_landings %></td>
+                <td><%= capsule.reuse_count %></td>
+                <td><%= capsule.last_update %></td>
+              </tr>
+        <% } %>
+        </tbody>
+      </table>
+</body>
+</html>

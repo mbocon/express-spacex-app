@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+    <h1><%= company.name %></h1>
+    <p>Headquarters
+        <%= company.headquarters.address %>
+        <br>
+        <%= company.headquarters.city %>
+        <br>
+        <%= company.headquarters.state %>
+    </p>
+    <div class="card">
+        <div class="card-content">
+          <p class="title">
+            <%= company.summary %>
+          </p>
+          <p class="subtitle">
+           <%= company.founder %>
+          </p>
+        </div>
+        <footer class="card-footer">
+          <p class="card-footer-item">
+            <span>
+              CTO: <%= company.cto %>
+            </span>
+          </p>
+          <p class="card-footer-item">
+            <span>
+            COO: <%= company.coo %>
+            </span>
+          </p>
+          <p class="card-footer-item">
+            <span>
+              View on <a href="<%= company.links.twitter %>">Twitter</a>
+            </span>
+          </p>
+          <p class="card-footer-item">
+            <span>
+              View on <a href="<%= company.links.flickr %>">Flickr</a>
+            </span>
+          </p>
+        </footer>
+      </div>
+</body>
+</html>
