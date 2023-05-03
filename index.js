@@ -8,8 +8,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (req, res) {
-    // res.json({ message: 'Welcome to our cool app!' });
-    res.sendFile(__dirname+'/views/index.html');
+    axios.get('https://api.spacexdata.com/v4/company')
+    .then(function (response) {
+        // handle success
+        return res.render('index', { company: response.data });
+    })
+    .catch(function (error) {
+        res.json({ message: 'Data not found. Please try again later.' });
+    });
 });
 
 app.get('/about', function (req, res) {

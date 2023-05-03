@@ -40,7 +40,7 @@
 <nav class="navbar is-sticky-top navigation" role="navigation" aria-label="main navigation">
    <div class="container">
       <div class="navbar-brand">
-         <a class="navbar-item" href="index.html">
+         <a class="navbar-item" href="/">
             <img class="img-fluid" src="images/logo.png" alt="godocs" width="155px">
          </a>
    
@@ -53,7 +53,7 @@
    
       <div id="navbar-links" class="navbar-menu">
          <div class="navbar-start ml-auto">
-            <a class="navbar-item" href="/index">Home</a>
+            <a class="navbar-item" href="/">Home</a>
             <a class="navbar-item" href="/list">Inner Page</a>
             <a class="navbar-item" href="/search">Search Page</a>
          </div>
@@ -240,16 +240,10 @@
          <div class="column is-6-desktop">
             <div class="card card-lg">
                <div class="card-body">
-                  <h3 class="card-title h5">Will updates also be free?</h3>
-                  <p class="card-text content">Lorem, <a href="https://examplesite.com">link</a> <em>ipsum</em> dolor
-                     sit amet consectetur adipisicing elit. Cumque praesentium nisi officiis maiores quia sapiente totam
-                     omnis vel sequi corporis ipsa incidunt reprehenderit recusandae maxime perspiciatis iste placeat
-                     architecto, mollitia delectus ut ab quibusdam. Magnam cumque numquam tempore reprehenderit illo,
-                     unde cum omnis vel sed temporibus. mollitia delectus ut ab quibusdam. Magnam cumque numquam tempore
-                     reprehenderit illo, unde cum
-                     omnis vel sed temporibus. mollitia delectus ut ab quibusdam. Magnam cumque numquam tempore
-                     reprehenderit
-                     illo, unde cum omnis vel sed temporibus.</p>
+                  <h3 class="card-title h5">Where is Space X HQ located?</h3>
+                  <p class="card-text content">
+                     <%= company.headquarters.city %>, <%= company.headquarters.state %>
+                  </p>
                </div>
             </div>
          </div>
@@ -257,12 +251,10 @@
          <div class="column is-6-desktop">
             <div class="card card-lg">
                <div class="card-body">
-                  <h3 class="card-title h5">Discounts for students and Non Profit Organizations?</h3>
-                  <p class="card-text content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cumque
-                     praesentium
-                     nisi officiis maiores quia sapiente totam omnis vel sequi corporis ipsa incidunt reprehenderit
-                     recusandae
-                     maxime perspiciatis iste placeat architecto.</p>
+                  <h3 class="card-title h5">What does Space X do?</h3>
+                  <p class="card-text content">
+                     <%= company.summary %>
+                  </p>
                </div>
             </div>
          </div>
@@ -270,18 +262,10 @@
          <div class="column is-6-desktop">
             <div class="card card-lg">
                <div class="card-body">
-                  <h3 class="card-title h5">I need something unique, Can you make it?</h3>
-                  <p class="card-text content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cumque
-                     praesentium
-                     nisi officiis maiores quia sapiente totam omnis vel sequi corporis ipsa incidunt reprehenderit
-                     recusandae
-                     maxime perspiciatis iste placeat architecto, mollitia delectus <a
-                        href="https://examplesite.com">link</a>
-                     ut ab quibusdam. Magnam cumque numquam tempore reprehenderit illo, unde cum omnis vel sed
-                     temporibus,
-                     repudiandae impedit nam ad enim porro, qui labore fugiat quod suscipit fuga necessitatibus.
-                     Perferendis,
-                     ipsum?</p>
+                  <h3 class="card-title h5">What is Space X's valuation?</h3>
+                  <p class="card-text content">
+                     <%= company.valuation.toLocaleString('en-US') %>
+                  </p>
                </div>
             </div>
          </div>
@@ -289,14 +273,10 @@
          <div class="column is-6-desktop">
             <div class="card card-lg">
                <div class="card-body">
-                  <h3 class="card-title h5">Is there any documentation and support?</h3>
-                  <p class="card-text content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cumque
-                     praesentium
-                     nisi officiis maiores quia sapiente totam omnis vel sequi corporis ipsa incidunt reprehenderit
-                     recusandae
-                     maxime perspiciatis iste placeat architecto, mollitia delectus <a
-                        href="https://examplesite.com">link</a>
-                     ut ab quibusdam.</p>
+                  <h3 class="card-title h5">When was Space X founded?</h3>
+                  <p class="card-text content">
+                     <%= company.founded %>
+                  </p>
                </div>
             </div>
          </div>
@@ -304,12 +284,10 @@
          <div class="column is-6-desktop">
             <div class="card card-lg">
                <div class="card-body">
-                  <h3 class="card-title h5">Any refunds?</h3>
-                  <p class="card-text content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cumque
-                     praesentium
-                     nisi officiis maiores quia sapiente totam omnis vel sequi corporis ipsa incidunt reprehenderit
-                     recusandae
-                     maxime perspiciatis iste placeat architecto.</p>
+                  <h3 class="card-title h5">How many employees does Space X have?</h3>
+                  <p class="card-text content">
+                     <%= company.employees.toLocaleString('en-US') %>
+                  </p>
                </div>
             </div>
          </div>
@@ -317,10 +295,10 @@
          <div class="column is-6-desktop">
             <div class="card card-lg">
                <div class="card-body">
-                  <h3 class="card-title h5">What is a product key?</h3>
-                  <p class="card-text content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cumque
-                     praesentium
-                     nisi officiis maiores quia sapiente totam omnis vel sequi corporis ipsa incidunt</p>
+                  <h3 class="card-title h5">Who is the CEO of Space X?</h3>
+                  <p class="card-text content">
+                     <%= company.ceo %>
+                  </p>
                </div>
             </div>
          </div>
@@ -338,9 +316,8 @@
          </div>
          <div class="column is-8-desktop has-text-centered-mobile has-text-centered-tablet has-text-left-desktop">
             <h2 class="mb-3">Still Didn&rsquo;t Find Your Answer?</h2>
-            <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam <br> nonumy eirmod tempor invidunt ut
-               labore et dolore magna aliquyam</p>
-            <a href="contact.html" class="btn btn-primary">Submit a ticket</a>
+            <p>Please reach out to us with more questions.</p>
+            <a href="/contact" class="btn btn-primary">Submit a ticket</a>
          </div>
       </div>
    </div>
@@ -358,7 +335,7 @@
             </ul>
          </div>
          <div class="column is-4-desktop is-12-tablet">
-            <a class="navbar-brand is-justify-content-center" href="index.html">
+            <a class="navbar-brand is-justify-content-center" href="/">
                <img class="img-fluid" src="images/logo.png" alt="Hugo documentation theme">
             </a>
          </div>
