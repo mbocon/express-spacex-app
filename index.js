@@ -62,28 +62,28 @@ app.get('/capsules', function (req, res) {
 });
 
 // Return a single capsule
-// app.get('/capsules/:serial', function (req, res) {
-//     axios.get('https://api.spacexdata.com/v4/capsules')
-//         .then(function (response) {
-//             // handle success
-//             let found = false;
+app.get('/capsules/:id', function (req, res) {
+    axios.get('https://api.spacexdata.com/v4/capsules')
+        .then(function (response) {
+            // handle success
+            let found = false;
 
-//             for (let i in response.data) {
-//                 let capsule = response.data[i];
+            for (let i in response.data) {
+                let capsule = response.data[i];
 
-//                 if (capsule.serial === req.params.serial.toUpperCase()) {
-//                     res.json({ data: response.data[i] });
-//                     found = true;
-//                 }
-//             }
-//             if (!found) {
-//                 res.json({ data: 'Capsule does not exist.' });
-//             }
-//         })
-//         .catch(function (error) {
-//             res.json({ message: 'Data not found. Please try again later.' });
-//         });
-// });
+                if (capsule.id === req.params.id) {
+                    found = true;
+                    return res.render('single-capsule', { capsules: response.data, capsule: response.data[i] });
+                }
+            }
+            if (!found) {
+                res.json({ data: 'Capsule does not exist.' });
+            }
+        })
+        .catch(function (error) {
+            res.json({ message: 'Data not found. Please try again later.' });
+        });
+});
 
 // Return Capsules by Parameter
 app.get('/capsules/*', function (req, res) {
