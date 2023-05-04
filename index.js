@@ -239,38 +239,39 @@ app.get('/cores/*', function (req, res) {
 
 app.get('/crew', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/crew')
-        .then(function (response) {
-            // handle success
-            res.json({ data: response.data });
-        })
-        .catch(function (error) {
-            res.json({ message: 'Data not found. Please try again later.' });
-        });
+    .then(function (response) {
+        // handle success
+        res.render('crew', { crew: response.data });
+    })
+    .catch(function (error) {
+        res.json({ message: 'Data not found. Please try again later.' });
+    });
 });
-
+    
 // Return a crew member by Name
-app.get('/crew/:name', function (req, res) {
+app.get('/single-crew/:firstname/:lastname', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/crew')
-        .then(function (response) {
-            // handle success
-            let found = false;
+    .then(function (response) {
+        // handle success
+        let found = false;
 
-            for (let i in response.data) {
-                let crewmem = response.data[i];
-                // console.log(crewmem.name, req.params.name);
+        for (let i in response.data) {
+            let crewmem = response.data[i];
+            let firstName = crewmem.name.split(' ')[0];
+            let lastName = crewmem.name.split(' ')[1];
 
-                if (crewmem.name === req.params.name) {
-                    res.json({ data: response.data[i] });
-                    found = true;
-                }
+            if (firstName === req.params.firstname && lastName === req.params.lastname) {
+                return res.render('single-crew', { crew: response.data, member: crewmem });
+                found = true;
             }
-            if (!found) {
-                res.json({ data: 'Crew member does not exist.' });
-            }
-        })
-        .catch(function (error) {
-            res.json({ message: 'Data not found. Please try again later.' });
-        });
+        }
+        if (!found) {
+            res.json({ data: 'Crew member does not exist.' });
+        }
+    })
+    .catch(function (error) {
+        res.json({ message: 'Data not found. Please try again later.' });
+    });
 });
 
 app.get('/dragons', function (req, res) {
