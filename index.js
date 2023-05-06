@@ -278,7 +278,7 @@ app.get('/dragons', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/dragons')
         .then(function (response) {
             // handle success
-            res.json({ data: response.data });
+            return res.render('dragons', { dragons: response.data });
         })
         .catch(function (error) {
             res.json({ message: 'Data not found. Please try again later.' });
@@ -286,28 +286,28 @@ app.get('/dragons', function (req, res) {
 });
 
 // Return a single dragon by ID
-// app.get('/dragons/:id', function (req, res) {
-//     axios.get('https://api.spacexdata.com/v4/dragons')
-//         .then(function (response) {
-//             // handle success
-//             let found = false;
+app.get('/dragons/:id', function (req, res) {
+    axios.get('https://api.spacexdata.com/v4/dragons')
+        .then(function (response) {
+            // handle success
+            let found = false;
 
-//             for (let i in response.data) {
-//                 let dragon = response.data[i];
+            for (let i in response.data) {
+                let dragon = response.data[i];
 
-//                 if (dragon.id === req.params.id) {
-//                     res.json({ data: response.data[i] });
-//                     found = true;
-//                 }
-//             }
-//             if (!found) {
-//                 res.json({ data: 'Dragon does not exist.' });
-//             }
-//         })
-//         .catch(function (error) {
-//             res.json({ message: 'Data not found. Please try again later.' });
-//         });
-// });
+                if (dragon.id === req.params.id) {
+                    return res.render('single-dragon', { dragon: response.data[i], dragons: response.data });
+                    found = true;
+                }
+            }
+            if (!found) {
+                return res.json({ data: 'Dragon does not exist.' });
+            }
+        })
+        .catch(function (error) {
+            res.json({ message: 'Data not found. Please try again later.' });
+        });
+});
 
 // Return dragons by Parameter
 app.get('/dragons/*', function (req, res) {
