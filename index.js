@@ -61,6 +61,10 @@ app.get('/capsules', function (req, res) {
         });
 });
 
+app.get('/capsules/new', function (req, res) {
+    return res.render('capsules/new', )
+});
+
 // Return a single capsule
 app.get('/capsules/:id', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/capsules')
@@ -85,62 +89,135 @@ app.get('/capsules/:id', function (req, res) {
         });
 });
 
-// Return Capsules by Parameter
-app.get('/capsules/*', function (req, res) {
+app.post('/capsules', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/capsules')
         .then(function (response) {
-            // print req.params, API response
-            // console.log('req.params', req.params); // print an object
-            // console.log('response', response.data); // print an array of capsules
 
-            // run a for loop to search based on the key from req.params
-            const capsuleArray = [];
-            for (let i in response.data) {
-                let capsule = response.data[i];
-                let userRequest = req.params['0'].split('/'); // ['serial', 'c103'] ['reuse_count', '0']
-                
-                if(userRequest[0].toLowerCase() === 'serial') { // search by serial
-                    if(capsule.serial.toUpperCase() === userRequest[1].toUpperCase()) {
-                        return res.json({ capsule });
+            let searchBy = req.body.category;
+            let searchVal = req.body.item;
+            let capsuleArray = [];
+
+            if(searchBy.toLowerCase() === 'serial') { // search by serial
+                response.data.forEach((capsule) => {
+                    if(capsule.serial.toUpperCase() === searchVal.toUpperCase()) {
+                        return res.redirect(`/capsules/${capsule.id}`);
                     }
-                } else if(userRequest[0].toLowerCase() === 'serial') { // search by id
-                    if(capsule.id.toUpperCase() === userRequest[1].toUpperCase()) {
-                        return res.json({ capsule });
+                });
+            } else if(searchBy.toLowerCase() === 'id') { // search by id
+                response.data.forEach((capsule) => {
+                    if(capsule.id.toUpperCase() === searchVal.toUpperCase()) {
+                        return res.redirect(`/capsules/${capsule.id}`);
                     }
-                } else if (userRequest[0].toLowerCase() === 'reuse_count') { // search by reuse_count
-                    let countValue = parseInt(userRequest[1]);
-                    if (capsule.reuse_count === countValue) {
-                        capsuleArray.push(capsule);
-                    }
-                } else if (userRequest[0].toLowerCase() === 'water_landings') { // search by water_landings
-                    let countValue = parseInt(userRequest[1]);
-                    if (capsule.water_landings === countValue) {
-                        capsuleArray.push(capsule);
-                    }
-                } else if (userRequest[0].toLowerCase() === 'last_update') { // search by last_update
-                    if (capsule.last_update === userRequest[1]) {
-                        capsuleArray.push(capsule);
-                    }
-                } else if (userRequest[0].toLowerCase() === 'status') { // search by status
-                    if (capsule.status === userRequest[1]) {
-                        capsuleArray.push(capsule);
-                    }
-                } else if (userRequest[0].toLowerCase() === 'type') { // search by type
-                    if (capsule.type === userRequest[1]) {
-                        capsuleArray.push(capsule);
-                    }
-                } else {
-                    return res.json({ message: 'Invalid key.' });
-                }
+                });
+            } else if (searchBy.toLowerCase() === 'reuse_count') { // search by reuse_count
+                let countValue = parseInt(searchVal);
+                capsuleArray = response.data.filter((capsule) => {
+                    return capsule.reuse_count === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'water_landings') { // search by water_landings
+                let countValue = parseInt(searchVal);
+                capsuleArray = response.data.filter((capsule) => {
+                    return capsule.water_landings === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'land_landings') { // search by land_landings
+                let countValue = parseInt(searchVal);
+                capsuleArray = response.data.filter((capsule) => {
+                    return capsule.land_landings === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'last_update') { // search by last_update
+                capsuleArray = response.data.filter((capsule) => {
+                    return capsule.last_update && capsule.last_update.trim() === searchVal.trim();
+                });
+            } else if (searchBy.toLowerCase() === 'status') { // search by status
+                capsuleArray = response.data.filter((capsule) => {
+                    return capsule.status.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'type') { // search by type
+                capsuleArray = response.data.filter((capsule) => {
+                    return capsule.type.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'launch') { // search by launch
+                capsuleArray = response.data.filter((capsule) => {
+                    let found = false;
+                    capsule.launches.forEach((launch) => {
+                        if (launch.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else {
+                return res.render('capsules', { capsules: capsuleArray, message: 'Invalid key.', searchBy, searchVal });
             }
             
+
             if (capsuleArray.length > 0) {
-                return res.json({ capsules: capsuleArray });
+                res.render('capsules', { message: '', capsules: capsuleArray, searchBy, searchVal });
             } else {
-                return res.json({ message: 'No matching capsules.' });
+                return res.render('capsules', { message: 'No matching capsules.', capsules: capsuleArray, searchBy, searchVal });
             }
+        })
+        .catch(function (error) {
+            res.json({ message: 'Data not found. Please try again later.' });
         });
 });
+
+// Return Capsules by Parameter
+// app.get('/capsules/*', function (req, res) {
+//     axios.get('https://api.spacexdata.com/v4/capsules')
+//         .then(function (response) {
+//             // print req.params, API response
+//             // console.log('req.params', req.params); // print an object
+//             // console.log('response', response.data); // print an array of capsules
+
+//             // run a for loop to search based on the key from req.params
+//             const capsuleArray = [];
+//             for (let i in response.data) {
+//                 let capsule = response.data[i];
+//                 let userRequest = req.params['0'].split('/'); // ['serial', 'c103'] ['reuse_count', '0']
+                
+//                 if(userRequest[0].toLowerCase() === 'serial') { // search by serial
+//                     if(capsule.serial.toUpperCase() === userRequest[1].toUpperCase()) {
+//                         return res.json({ capsule });
+//                     }
+//                 } else if(userRequest[0].toLowerCase() === 'id') { // search by id
+//                     if(capsule.id.toUpperCase() === userRequest[1].toUpperCase()) {
+//                         return res.json({ capsule });
+//                     }
+//                 } else if (userRequest[0].toLowerCase() === 'reuse_count') { // search by reuse_count
+//                     let countValue = parseInt(userRequest[1]);
+//                     if (capsule.reuse_count === countValue) {
+//                         capsuleArray.push(capsule);
+//                     }
+//                 } else if (userRequest[0].toLowerCase() === 'water_landings') { // search by water_landings
+//                     let countValue = parseInt(userRequest[1]);
+//                     if (capsule.water_landings === countValue) {
+//                         capsuleArray.push(capsule);
+//                     }
+//                 } else if (userRequest[0].toLowerCase() === 'last_update') { // search by last_update
+//                     if (capsule.last_update === userRequest[1]) {
+//                         capsuleArray.push(capsule);
+//                     }
+//                 } else if (userRequest[0].toLowerCase() === 'status') { // search by status
+//                     if (capsule.status === userRequest[1]) {
+//                         capsuleArray.push(capsule);
+//                     }
+//                 } else if (userRequest[0].toLowerCase() === 'type') { // search by type
+//                     if (capsule.type === userRequest[1]) {
+//                         capsuleArray.push(capsule);
+//                     }
+//                 } else {
+//                     return res.json({ message: 'Invalid key.' });
+//                 }
+//             }
+            
+//             if (capsuleArray.length > 0) {
+//                 return res.json({ capsules: capsuleArray });
+//             } else {
+//                 return res.json({ message: 'No matching capsules.' });
+//             }
+//         });
+// });
 
 app.get('/company', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/company')
