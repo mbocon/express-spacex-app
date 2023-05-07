@@ -1,9 +1,11 @@
 const express = require('express');
 const axios = require('axios');
 const app = express();
+const ejsLayouts = require('express-ejs-layouts');
 
 
 app.set('view engine', 'ejs');
+app.use(ejsLayouts);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 
