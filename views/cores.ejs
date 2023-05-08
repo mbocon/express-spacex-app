@@ -55,7 +55,6 @@
             <div class="px-4">
                <h2 class="mb-4 has-text-weight-medium">Cores</h2> <!-- main content -->
                <div class="content">
-                  <p><img src="images/nasa-8Hjx3GNZYeA-unsplash.jpg" width="500px" alt="image"></p>
                   <% cores.forEach((core) => { %>
                      <div class="card">
                         <p><strong><a href="/cores/<%= core.id %>"><%= core.serial %></a></strong></p>
@@ -81,6 +80,10 @@
                      </div>
                      <hr />
                   <% }); %>
+
+                  <% if (cores.length === 0) { %>
+                     <p><%= message %></p>
+                  <% } %>
                </div>
             </div>
          </div>

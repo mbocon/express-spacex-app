@@ -75,6 +75,10 @@
                     </div></div></div>
                     <hr />
                   <% }); %>
+
+                  <% if (crew.length === 0) { %>
+                     <p><%= message %></p>
+                  <% } %>
                 </div>
             </div>
          </div>

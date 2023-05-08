@@ -3,18 +3,24 @@
       <div class="columns is-desktop is-justify-content-center">
          <div class="column is-8-desktop">
             <div class="p-6 shadow rounded content">
-                <h2 class="section-title">Search Crew</h2>
-                <form method="POST" action="/crew">
+                <h2 class="section-title">Search Cores</h2>
+                <form method="POST" action="/cores/search">
                     <div class="columns is-multiline">
                         <div class="form-group column is-12">
                             <label for="category">Search By</label>
                             <select id="category" class="input custom-select" name="category" required>
                                 <option selected disabled>Choose Category</option>
-                                <option value="name">Name</option>
-                                <option value="agency">Agency</option>
+                                <option value="serial">Serial</option>
                                 <option value="status">Status</option>
-                                <option value="launch">Launch</option>
+                                <option value="reuse_count">Reuse Count</option>
+                                <option value="block">Block</option>
+                                <option value="rtls_attempts">RTLS Attempts</option>
+                                <option value="rtls_landings">RTLS Landings</option>
+                                <option value="ASDS_attempts">ASDS Attempts</option>
+                                <option value="ASDS_landings">ASDS Landings</option>
                                 <option value="id">ID</option>
+                                <option value="launch">Launch</option>
+                                <option value="last_update">Last Update</option>
                             </select>
                         </div>
                         <div class="form-group column is-6-desktop">

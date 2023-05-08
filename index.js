@@ -63,8 +63,8 @@ app.get('/capsules', function (req, res) {
         });
 });
 
-app.get('/capsules/new', function (req, res) {
-    return res.render('capsules/new', )
+app.get('/capsules/search', function (req, res) {
+    return res.render('capsules/search', )
 });
 
 // Return a single capsule
@@ -91,7 +91,7 @@ app.get('/capsules/:id', function (req, res) {
         });
 });
 
-app.post('/capsules', function (req, res) {
+app.post('/capsules/search', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/capsules')
         .then(function (response) {
 
@@ -240,8 +240,8 @@ app.get('/cores', function (req, res) {
         });
 });
 
-app.get('/cores/new', function (req, res) {
-    return res.render('cores/new');
+app.get('/cores/search', function (req, res) {
+    return res.render('cores/search');
 });
 
 // Return a single core by Serial
@@ -268,7 +268,7 @@ app.get('/cores/:id', function (req, res) {
         });
 });
 
-app.post('/cores', function (req, res) {
+app.post('/cores/search', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/cores')
         .then(function (response) {
 
@@ -408,9 +408,13 @@ app.get('/crew', function (req, res) {
         res.json({ message: 'Data not found. Please try again later.' });
     });
 });
+
+app.get('/crew/search', function (req, res) {
+    return res.render('crew/search');
+});
     
 // Return a crew member by Name
-app.get('/single-crew/:firstname/:lastname', function (req, res) {
+app.get('/crew/:firstname/:lastname', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/crew')
     .then(function (response) {
         // handle success
@@ -435,11 +439,8 @@ app.get('/single-crew/:firstname/:lastname', function (req, res) {
     });
 });
 
-app.get('/crew/new', function (req, res) {
-    return res.render('crew/new');
-});
 
-app.post('/crew', function (req, res) {
+app.post('/crew/search', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/crew')
         .then(function (response) {
 
@@ -452,7 +453,7 @@ app.post('/crew', function (req, res) {
                     if (crew.name.toUpperCase() === searchVal.toUpperCase()) {
                         let firstName = crew.name.split(' ')[0];
                         let lastName = crew.name.split(' ')[1];
-                        return res.redirect(`/single-crew/${firstName}/${lastName}`);
+                        return res.redirect(`/crew/${firstName}/${lastName}`);
                     }
                 });
             } else if(searchBy.toLowerCase() === 'id') { // search by id
@@ -460,7 +461,7 @@ app.post('/crew', function (req, res) {
                     if (crew.id.toUpperCase() === searchVal.toUpperCase()) {
                         let firstName = crew.name.split(' ')[0];
                         let lastName = crew.name.split(' ')[1];
-                        return res.redirect(`/single-crew/${firstName}/${lastName}`);
+                        return res.redirect(`/crew/${firstName}/${lastName}`);
                     }
                 });
             } else if (searchBy.toLowerCase() === 'agency') { // search by agency
@@ -508,6 +509,10 @@ app.get('/dragons', function (req, res) {
         });
 });
 
+app.get('/dragons/search', function (req, res) {
+    return res.render('dragons/search');
+});
+
 // Return a single dragon by ID
 app.get('/dragons/:id', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/dragons')
@@ -525,6 +530,63 @@ app.get('/dragons/:id', function (req, res) {
             }
             if (!found) {
                 return res.json({ data: 'Dragon does not exist.' });
+            }
+        })
+        .catch(function (error) {
+            res.json({ message: 'Data not found. Please try again later.' });
+        });
+});
+
+
+app.post('/dragons/search', function (req, res) {
+    axios.get('https://api.spacexdata.com/v4/dragons')
+        .then(function (response) {
+
+            let searchBy = req.body.category;
+            let searchVal = req.body.item;
+            let dragonArray = [];
+
+            if(searchBy.toLowerCase() === 'name') { // search by name
+                response.data.forEach((dragon) => {
+                    if (dragon.name.toUpperCase() === searchVal.toUpperCase()) {
+                        return res.redirect(`/dragons/${dragon.id}`);
+                    }
+                });
+            } else if(searchBy.toLowerCase() === 'id') { // search by id
+                response.data.forEach((dragon) => {
+                    if (dragon.id.toUpperCase() === searchVal.toUpperCase()) {
+                        return res.redirect(`/dragons/${dragon.id}`);
+                    }
+                });
+            } else if (searchBy.toLowerCase() === 'type') { // search by type
+                dragonArray = response.data.filter((dragon) => {
+                    return dragon.type.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'active') { // search by active
+                dragonArray = response.data.filter((dragon) => {
+                    return dragon.active === searchVal;
+                });
+            } else if (searchBy.toLowerCase() === 'first_flight') { // search by first_flight
+                dragonArray = response.data.filter((dragon) => {
+                    return dragon.first_flight === searchVal;
+                });
+            } else if (searchBy.toLowerCase() === 'crew_capacity') { // search by crew_capacity
+                dragonArray = response.data.filter((dragon) => {
+                    return dragon.crew_capacity.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'orbit_duration_yr') { // search by orbit_duration_yr
+                dragonArray = response.data.filter((dragon) => {
+                    return dragon.orbit_duration_yr.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else {
+                return res.render('dragons', { dragons: dragonArray, message: 'Invalid key.', searchBy, searchVal });
+            }
+            
+
+            if (dragonArray.length > 0) {
+                res.render('dragons', { message: '', dragons: dragonArray, searchBy, searchVal });
+            } else {
+                return res.render('dragons', { message: 'No matching dragon.', dragons: dragonArray, searchBy, searchVal });
             }
         })
         .catch(function (error) {
@@ -604,73 +666,73 @@ app.get('/landpads', function (req, res) {
 });
 
 // Return a single landpad by ID
-// app.get('/landpads/:id', function (req, res) {
-//     axios.get('https://api.spacexdata.com/v4/landpads')
-//         .then(function (response) {
-//             // handle success
-//             let found = false;
-
-//             for (let i in response.data) {
-//                 let landpad = response.data[i];
-
-//                 if (landpad.id === req.params.id) {
-//                     res.json({ data: response.data[i] });
-//                     found = true;
-//                 }
-//             }
-//             if (!found) {
-//                 res.json({ data: 'Landpad does not exist.' });
-//             }
-//         })
-//         .catch(function (error) {
-//             res.json({ message: 'Data not found. Please try again later.' });
-//         });
-// });
-
-// Return landpads by Parameter
-app.get('/landpads/*', function (req, res) {
+app.get('/landpads/:id', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/landpads')
         .then(function (response) {
+            // handle success
+            let found = false;
 
-            // run a for loop to search based on the key from req.params
-            const landpadArray = [];
             for (let i in response.data) {
                 let landpad = response.data[i];
-                let userRequest = req.params['0'].split('/'); // ['serial', 'c103'] ['reuse_count', '0']
-                
-                if(userRequest[0].toLowerCase() === 'full_name') { // search by full_name
-                    if(landpad.full_name.toUpperCase() === userRequest[1].toUpperCase()) {
-                        return res.json({ landpad });
-                    }
-                } else if(userRequest[0].toLowerCase() === 'id') { // search by id
-                    if(landpad.id.toUpperCase() === userRequest[1].toUpperCase()) {
-                        return res.json({ landpad });
-                    }
-                } else if(userRequest[0].toLowerCase() === 'region') { // search by region
-                    if(landpad.region.toUpperCase() === userRequest[1].toUpperCase()) {
-                        return res.json({ landpad });
-                    }
-                }else if (userRequest[0].toLowerCase() === 'landing_attempts') { // search by landing_attempts
-                    let landAttempts = parseInt(userRequest[1]);
-                    if (landpad.landing_attempts === landAttempts) {
-                        landpadArray.push(landpad);
-                    }
-                } else if (userRequest[0].toLowerCase() === 'type') { // search by type
-                    if (landpad.type === userRequest[1]) {
-                        landpadArray.push(landpad);
-                    }
-                } else {
-                    return res.json({ message: 'Invalid key.' });
+
+                if (landpad.id === req.params.id) {
+                    res.json({ data: response.data[i] });
+                    found = true;
                 }
             }
-            
-            if (landpadArray.length > 0) {
-                return res.json({ landpads: landpadArray });
-            } else {
-                return res.json({ message: 'No matching landpads.' });
+            if (!found) {
+                res.json({ data: 'Landpad does not exist.' });
             }
+        })
+        .catch(function (error) {
+            res.json({ message: 'Data not found. Please try again later.' });
         });
 });
+
+// Return landpads by Parameter
+// app.get('/landpads/*', function (req, res) {
+//     axios.get('https://api.spacexdata.com/v4/landpads')
+//         .then(function (response) {
+
+//             // run a for loop to search based on the key from req.params
+//             const landpadArray = [];
+//             for (let i in response.data) {
+//                 let landpad = response.data[i];
+//                 let userRequest = req.params['0'].split('/'); // ['serial', 'c103'] ['reuse_count', '0']
+                
+//                 if(userRequest[0].toLowerCase() === 'full_name') { // search by full_name
+//                     if(landpad.full_name.toUpperCase() === userRequest[1].toUpperCase()) {
+//                         return res.json({ landpad });
+//                     }
+//                 } else if(userRequest[0].toLowerCase() === 'id') { // search by id
+//                     if(landpad.id.toUpperCase() === userRequest[1].toUpperCase()) {
+//                         return res.json({ landpad });
+//                     }
+//                 } else if(userRequest[0].toLowerCase() === 'region') { // search by region
+//                     if(landpad.region.toUpperCase() === userRequest[1].toUpperCase()) {
+//                         return res.json({ landpad });
+//                     }
+//                 }else if (userRequest[0].toLowerCase() === 'landing_attempts') { // search by landing_attempts
+//                     let landAttempts = parseInt(userRequest[1]);
+//                     if (landpad.landing_attempts === landAttempts) {
+//                         landpadArray.push(landpad);
+//                     }
+//                 } else if (userRequest[0].toLowerCase() === 'type') { // search by type
+//                     if (landpad.type === userRequest[1]) {
+//                         landpadArray.push(landpad);
+//                     }
+//                 } else {
+//                     return res.json({ message: 'Invalid key.' });
+//                 }
+//             }
+            
+//             if (landpadArray.length > 0) {
+//                 return res.json({ landpads: landpadArray });
+//             } else {
+//                 return res.json({ message: 'No matching landpads.' });
+//             }
+//         });
+// });
 
 app.get('/launches', function (req, res) {
     axios.get('https://api.spacexdata.com/v5/launches')

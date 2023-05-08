@@ -54,7 +54,6 @@
             <div class="px-4">
                <h2 class="mb-4 has-text-weight-medium">Capsules</h2>
                <div class="content">
-                  <p><img src="images/nasa-8Hjx3GNZYeA-unsplash.jpg" width="500px" alt="image"></p>
                   <% capsules.forEach((capsule) => { %>
                      <div class="card">
                         <p><strong><a href="/capsules/<%= capsule.id %>"><%= capsule.serial %></a></strong></p>
@@ -80,6 +79,9 @@
                      </div>
                      <hr />
                   <% }); %>
+                  <% if (capsules.length === 0) { %>
+                     <p><%= message %></p>
+                  <% } %>
                </div>
             </div>
          </div>
