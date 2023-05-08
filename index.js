@@ -168,9 +168,6 @@ app.post('/capsules', function (req, res) {
 // app.get('/capsules/*', function (req, res) {
 //     axios.get('https://api.spacexdata.com/v4/capsules')
 //         .then(function (response) {
-//             // print req.params, API response
-//             // console.log('req.params', req.params); // print an object
-//             // console.log('response', response.data); // print an array of capsules
 
 //             // run a for loop to search based on the key from req.params
 //             const capsuleArray = [];
@@ -236,85 +233,170 @@ app.get('/cores', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/cores')
         .then(function (response) {
             // handle success
-            res.json({ data: response.data });
+            return res.render('cores', { cores: response.data });
         })
         .catch(function (error) {
             res.json({ message: 'Data not found. Please try again later.' });
         });
 });
 
+app.get('/cores/new', function (req, res) {
+    return res.render('cores/new');
+});
+
 // Return a single core by Serial
-// app.get('/cores/:serial', function (req, res) {
-//     axios.get('https://api.spacexdata.com/v4/cores')
-//         .then(function (response) {
-//             // handle success
-//             let found = false;
-
-//             for (let i in response.data) {
-//                 let core = response.data[i];
-
-//                 if (core.serial === req.params.serial.toUpperCase()) {
-//                     res.json({ data: response.data[i] });
-//                     found = true;
-//                 }
-//             }
-//             if (!found) {
-//                 res.json({ data: 'Core does not exist.' });
-//             }
-//         })
-//         .catch(function (error) {
-//             res.json({ message: 'Data not found. Please try again later.' });
-//         });
-// });
-
-// Return cores by Parameter
-app.get('/cores/*', function (req, res) {
+app.get('/cores/:id', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/cores')
         .then(function (response) {
-            // print req.params, API response
-            // console.log('req.params', req.params); // print an object
-            // console.log('response', response.data); // print an array of cores
+            // handle success
+            let found = false;
 
-            // run a for loop to search based on the key from req.params
-            const coreArray = [];
             for (let i in response.data) {
                 let core = response.data[i];
-                let userRequest = req.params['0'].split('/'); // ['serial', 'c103'] ['reuse_count', '0']
-                
-                if(userRequest[0].toLowerCase() === 'serial') { // search by serial
-                    if(core.serial.toUpperCase() === userRequest[1].toUpperCase()) {
-                        return res.json({ core });
-                    }
-                } else if(userRequest[0].toLowerCase() === 'last_update') { // search by last_update
-                    if(core.last_update === userRequest[1]) {
-                        coreArray.push(core);
-                    }
-                } else if (userRequest[0].toLowerCase() === 'reuse_count') { // search by reuse_count
-                    let countValue = parseInt(userRequest[1]);
-                    if (core.reuse_count === countValue) {
-                        coreArray.push(core);
-                    }
-                } else if (userRequest[0].toLowerCase() === 'rtls_landings') { // search by rtls_landings
-                    let countValue = parseInt(userRequest[1]);
-                    if (core.rtls_landings === countValue) {
-                        coreArray.push(core);
-                    }
-                } else if(userRequest[0].toLowerCase() === 'status') { // search by status
-                    if(core.status === userRequest[1]) {
-                        coreArray.push(core);
-                    }
-                } else {
-                    return res.json({ message: 'Invalid key.' });
+
+                if (core.id.toUpperCase() === req.params.id.toUpperCase()) {
+                    res.render('single-core', { core: response.data[i], cores: response.data });
+                    found = true;
                 }
             }
-            
-            if (coreArray.length > 0) {
-                return res.json({ cores: coreArray });
-            } else {
-                return res.json({ message: 'No matching cores.' });
+            if (!found) {
+                res.json({ data: 'Core does not exist.' });
             }
+        })
+        .catch(function (error) {
+            res.json({ message: 'Data not found. Please try again later.' });
         });
 });
+
+app.post('/cores', function (req, res) {
+    axios.get('https://api.spacexdata.com/v4/cores')
+        .then(function (response) {
+
+            let searchBy = req.body.category;
+            let searchVal = req.body.item;
+            let coreArray = [];
+
+            if(searchBy.toLowerCase() === 'serial') { // search by serial
+                response.data.forEach((core) => {
+                    if(core.serial.toUpperCase() === searchVal.toUpperCase()) {
+                        return res.redirect(`/cores/${core.id}`);
+                    }
+                });
+            } else if(searchBy.toLowerCase() === 'id') { // search by id
+                response.data.forEach((core) => {
+                    if(core.id.toUpperCase() === searchVal.toUpperCase()) {
+                        return res.redirect(`/cores/${core.id}`);
+                    }
+                });
+            } else if (searchBy.toLowerCase() === 'block') { // search by block
+                let countValue = parseInt(searchVal);
+                coreArray = response.data.filter((core) => {
+                    return core.block === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'reuse_count') { // search by reuse_count
+                let countValue = parseInt(searchVal);
+                coreArray = response.data.filter((core) => {
+                    return core.reuse_count === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'rtls_attempts') { // search by rtls_attempts
+                let countValue = parseInt(searchVal);
+                coreArray = response.data.filter((core) => {
+                    return core.rtls_attempts === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'rtls_landings') { // search by rtls_landings
+                let countValue = parseInt(searchVal);
+                coreArray = response.data.filter((core) => {
+                    return core.rtls_landings === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'asds_attempts') { // search by asds_attempts
+                let countValue = parseInt(searchVal);
+                coreArray = response.data.filter((core) => {
+                    return core.asds_attempts === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'asds_landings') { // search by asds_landings
+                let countValue = parseInt(searchVal);
+                coreArray = response.data.filter((core) => {
+                    return core.asds_landings === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'last_update') { // search by last_update
+                coreArray = response.data.filter((core) => {
+                    return core.last_update && core.last_update.trim() === searchVal.trim();
+                });
+            } else if (searchBy.toLowerCase() === 'status') { // search by status
+                coreArray = response.data.filter((core) => {
+                    return core.status.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'launch') { // search by launch
+                coreArray = response.data.filter((core) => {
+                    let found = false;
+                    core.launches.forEach((launch) => {
+                        if (launch.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else {
+                return res.render('cores', { cores: coreArray, message: 'Invalid key.', searchBy, searchVal });
+            }
+            
+
+            if (coreArray.length > 0) {
+                res.render('cores', { message: '', cores: coreArray, searchBy, searchVal });
+            } else {
+                return res.render('cores', { message: 'No matching cores.', cores: coreArray, searchBy, searchVal });
+            }
+        })
+        .catch(function (error) {
+            res.json({ message: 'Data not found. Please try again later.' });
+        });
+});
+
+// Return cores by Parameter
+// app.get('/cores/*', function (req, res) {
+//     axios.get('https://api.spacexdata.com/v4/cores')
+//         .then(function (response) {
+
+//             // run a for loop to search based on the key from req.params
+//             const coreArray = [];
+//             for (let i in response.data) {
+//                 let core = response.data[i];
+//                 let userRequest = req.params['0'].split('/'); // ['serial', 'c103'] ['reuse_count', '0']
+                
+//                 if(userRequest[0].toLowerCase() === 'serial') { // search by serial
+//                     if(core.serial.toUpperCase() === userRequest[1].toUpperCase()) {
+//                         return res.json({ core });
+//                     }
+//                 } else if(userRequest[0].toLowerCase() === 'last_update') { // search by last_update
+//                     if(core.last_update === userRequest[1]) {
+//                         coreArray.push(core);
+//                     }
+//                 } else if (userRequest[0].toLowerCase() === 'reuse_count') { // search by reuse_count
+//                     let countValue = parseInt(userRequest[1]);
+//                     if (core.reuse_count === countValue) {
+//                         coreArray.push(core);
+//                     }
+//                 } else if (userRequest[0].toLowerCase() === 'rtls_landings') { // search by rtls_landings
+//                     let countValue = parseInt(userRequest[1]);
+//                     if (core.rtls_landings === countValue) {
+//                         coreArray.push(core);
+//                     }
+//                 } else if(userRequest[0].toLowerCase() === 'status') { // search by status
+//                     if(core.status === userRequest[1]) {
+//                         coreArray.push(core);
+//                     }
+//                 } else {
+//                     return res.json({ message: 'Invalid key.' });
+//                 }
+//             }
+            
+//             if (coreArray.length > 0) {
+//                 return res.json({ cores: coreArray });
+//             } else {
+//                 return res.json({ message: 'No matching cores.' });
+//             }
+//         });
+// });
 
 app.get('/crew', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/crew')
@@ -351,6 +433,94 @@ app.get('/single-crew/:firstname/:lastname', function (req, res) {
     .catch(function (error) {
         res.json({ message: 'Data not found. Please try again later.' });
     });
+});
+
+app.get('/crew/new', function (req, res) {
+    return res.render('/crew/new');
+});
+
+app.post('/crew', function (req, res) {
+    axios.get('https://api.spacexdata.com/v4/crew')
+        .then(function (response) {
+
+            let searchBy = req.body.category;
+            let searchVal = req.body.item;
+            let crewArray = [];
+
+            if(searchBy.toLowerCase() === 'serial') { // search by serial
+                response.data.forEach((core) => {
+                    if(core.serial.toUpperCase() === searchVal.toUpperCase()) {
+                        return res.redirect(`/crew/${core.id}`);
+                    }
+                });
+            } else if(searchBy.toLowerCase() === 'id') { // search by id
+                response.data.forEach((core) => {
+                    if(core.id.toUpperCase() === searchVal.toUpperCase()) {
+                        return res.redirect(`/crew/${core.id}`);
+                    }
+                });
+            } else if (searchBy.toLowerCase() === 'block') { // search by block
+                let countValue = parseInt(searchVal);
+                crewArray = response.data.filter((core) => {
+                    return core.block === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'reuse_count') { // search by reuse_count
+                let countValue = parseInt(searchVal);
+                crewArray = response.data.filter((core) => {
+                    return core.reuse_count === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'rtls_attempts') { // search by rtls_attempts
+                let countValue = parseInt(searchVal);
+                crewArray = response.data.filter((core) => {
+                    return core.rtls_attempts === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'rtls_landings') { // search by rtls_landings
+                let countValue = parseInt(searchVal);
+                crewArray = response.data.filter((core) => {
+                    return core.rtls_landings === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'asds_attempts') { // search by asds_attempts
+                let countValue = parseInt(searchVal);
+                crewArray = response.data.filter((core) => {
+                    return core.asds_attempts === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'asds_landings') { // search by asds_landings
+                let countValue = parseInt(searchVal);
+                crewArray = response.data.filter((core) => {
+                    return core.asds_landings === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'last_update') { // search by last_update
+                crewArray = response.data.filter((core) => {
+                    return core.last_update && core.last_update.trim() === searchVal.trim();
+                });
+            } else if (searchBy.toLowerCase() === 'status') { // search by status
+                crewArray = response.data.filter((core) => {
+                    return core.status.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'launch') { // search by launch
+                crewArray = response.data.filter((core) => {
+                    let found = false;
+                    core.launches.forEach((launch) => {
+                        if (launch.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else {
+                return res.render('crew', { crew: crewArray, message: 'Invalid key.', searchBy, searchVal });
+            }
+            
+
+            if (crewArray.length > 0) {
+                res.render('crew', { message: '', crew: crewArray, searchBy, searchVal });
+            } else {
+                return res.render('crew', { message: 'No matching crew.', crew: crewArray, searchBy, searchVal });
+            }
+        })
+        .catch(function (error) {
+            res.json({ message: 'Data not found. Please try again later.' });
+        });
 });
 
 app.get('/dragons', function (req, res) {
@@ -392,9 +562,6 @@ app.get('/dragons/:id', function (req, res) {
 app.get('/dragons/*', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/dragons')
         .then(function (response) {
-            // print req.params, API response
-            // console.log('req.params', req.params); // print an object
-            // console.log('response', response.data); // print an array of dragons
 
             // run a for loop to search based on the key from req.params
             const dragonArray = [];
@@ -490,9 +657,6 @@ app.get('/landpads', function (req, res) {
 app.get('/landpads/*', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/landpads')
         .then(function (response) {
-            // print req.params, API response
-            // console.log('req.params', req.params); // print an object
-            // console.log('response', response.data); // print an array of landpads
 
             // run a for loop to search based on the key from req.params
             const landpadArray = [];
@@ -573,9 +737,6 @@ app.get('/launches', function (req, res) {
 app.get('/launches/*', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/launches')
         .then(function (response) {
-            // print req.params, API response
-            // console.log('req.params', req.params); // print an object
-            // console.log('response', response.data); // print an array of launches
 
             // run a for loop to search based on the key from req.params
             const launchArray = [];
@@ -656,9 +817,6 @@ app.get('/launchpads', function (req, res) {
 app.get('/launchpads/*', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/launchpads')
         .then(function (response) {
-            // print req.params, API response
-            // console.log('req.params', req.params); // print an object
-            // console.log('response', response.data); // print an array of launchpads
 
             // run a for loop to search based on the key from req.params
             const launchpadArray = [];
@@ -890,7 +1048,6 @@ app.get('/search', (req, res) => {
 });
 
 app.get('/:input', function (req, res) {
-    // console.log('req.params', req.params);
     res.json({ message: `There is no data for /${req.params.input}` });
 });
 

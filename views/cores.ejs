@@ -4,19 +4,19 @@
          <!-- sidebar -->
          <div class="column is-3-desktop is-12-tablet">
             <ul class="sidenav">
-              <li title="Capsules" class="sidelist parent active">
-                <a href="/capsules">Capsules</a>
-                <ul>
-                  <% capsules.forEach((capsule) => { %>
-                    <li class="sidelist">
-                        <a href="/capsules/<%= capsule.id %>"><%= capsule.serial %></a>
-                    </li>
-                  <% }); %>
-                </ul>
-              </li>
-              <li class="sidelist">
-                <a href="/cores">Cores</a>
-              </li>
+               <li title="cores" class="sidelist parent active">
+                 <a href="/cores">Cores</a>
+                 <ul>
+                   <% cores.forEach((core) => { %>
+                     <li class="sidelist">
+                         <a href="/cores/<%= core.id %>"><%= core.serial %></a>
+                     </li>
+                   <% }); %>
+                 </ul>
+               </li>
+               <li class="sidelist">
+                 <a href="/capsules">Capsules</a>
+               </li>
               <li class="sidelist">
                 <a href="/crew">Crew</a>
               </li>
@@ -50,29 +50,30 @@
             </ul>
          </div>
 
+         <!-- body -->
          <div class="column is-8-desktop is-12-tablet">
             <div class="px-4">
-               <h2 class="mb-4 has-text-weight-medium">Capsules</h2>
+               <h2 class="mb-4 has-text-weight-medium">Cores</h2> <!-- main content -->
                <div class="content">
-                  <p><img src="images/nasa-8Hjx3GNZYeA-unsplash.jpg" width="500px" alt="image"></p>
-                  <% capsules.forEach((capsule) => { %>
+                  <p><img src="images/getting-started.jpg" width="500px" alt="image"></p>
+                  <% cores.forEach((core) => { %>
                      <div class="card">
-                        <p><strong><a href="/capsules/<%= capsule.id %>"><%= capsule.serial %></a></strong></p>
-                        <p><%= capsule.last_update %></p>
+                        <p><strong><a href="/cores/<%= core.id %>"><%= core.serial %></a></strong></p>
+                        <p><%= core.last_update %></p>
+                        <% if(core.status === 'active') { %>
+                           <div class="badge changed">Active</div>
+                        <% } else if (core.status === 'inactive') { %>
+                           <div class="badge unreleased">Inactive</div>
+                        <% } else if (core.status === 'expended') { %>
+                           <div class="badge removed">Expended</div>
+                        <% } else if (core.status === 'lost') { %>
+                           <div class="badge depricated">Lost</div>
+                        <% } %>
                         <div class="mt-5">
-                           <% if(capsule.status === 'active') { %>
-                              <div class="badge changed">Active</div>
-                           <% } else if (capsule.status === 'unknown') { %>
-                              <div class="badge unreleased">Unknown</div>
-                           <% } else if (capsule.status === 'retired') { %>
-                              <div class="badge removed">Retired</div>
-                           <% } else if (capsule.status === 'destroyed') { %>
-                              <div class="badge depricated">Destroyed</div>
-                           <% } %>
                            
                            <h5>Launches</h5>
                            <ul>
-                              <% capsule.launches.forEach((launch) => { %>
+                              <% core.launches.forEach((launch) => { %>
                                  <li><%= launch %></li>
                               <% }); %>
                            </ul>

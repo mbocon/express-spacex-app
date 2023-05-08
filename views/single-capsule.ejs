@@ -5,7 +5,7 @@
             <div class="column is-3-desktop is-12-tablet">
                 <ul class="sidenav">
                     <li title="Capsules" class="sidelist parent">
-                        <a href="list.html">Capsules</a>
+                        <a href="/capsules">Capsules</a>
                         <ul>
                             <li class="sidelist parent active">
                                 <a href="/capsules/<%= capsule.id %>">
@@ -23,45 +23,76 @@
                             <% }); %>
                         </ul>
                     </li>
+                    <li class="sidelist">
+                        <a href="/cores">Cores</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/crew">Crew</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/dragons">Dragons</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/landpads">Landpads</a>    
+                    </li>
+                    <li class="sidelist">
+                        <a href="/launches">Launches</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/launchpads">Launchpads</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/payloads">Payloads</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/roadster">Roadster</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/rockets">Rockets</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/ships">Ships</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/starlink">Starlink</a>
+                    </li>
                 </ul>
             </div>
 
             <div class="column is-8-desktop is-12-tablet">
                 <div class="px-4">
-                    <h2 class="mb-4 has-text-weight-medium">
-                        <%= capsule.serial %>
-                    </h2>
+                    <h2 class="mb-4 has-text-weight-medium">Single Capsule</h2>
                     <div class="content">
-
-                        <!-- heading -->
-                        <p>
-                            <%= capsule.last_update %>
-                        </p>
-
-                        <!-- unordered list -->
-                        <ul>
-                            <li>Reuse Count: <%= capsule.reuse_count %>
-                            </li>
-                            <li>Water Landings: <%= capsule.water_landings %>
-                            </li>
-                            <li>Land Landings: <%= capsule.land_landings %>
-                            </li>
-                            <li>Status: <%= capsule.status %>
-                            </li>
-                            <li>Type: <%= capsule.type %>
-                            </li>
-                        </ul>
-                        <p>
-                            <br />
-                            Launches:
-                        </p>
-                        <ul>
-                            <% capsule.launches.forEach((launch)=> { %>
-                                <li>
-                                    <%= launch %>
-                                </li>
-                            <% }); %>
-                        </ul>
+                        <div class="card">
+                            <h4 class="mb-4 has-text-weight-medium"><%= capsule.serial %></h4>
+                            <div class="content">
+                                <% if(capsule.status === 'active') { %>
+                                    <div class="badge changed">Active</div>
+                                <% } else if (capsule.status === 'unknown') { %>
+                                    <div class="badge unreleased">Unknown</div>
+                                <% } else if (capsule.status === 'retired') { %>
+                                    <div class="badge removed">Retired</div>
+                                <% } else if (capsule.status === 'destroyed') { %>
+                                    <div class="badge depricated">Destroyed</div>
+                                <% } %>
+                                <p><%= capsule.last_update %></p>
+                                <ul>
+                                     <li>Reuse Count: <%= capsule.reuse_count %></li>
+                                    <li>Water Landings: <%= capsule.water_landings %></li>
+                                    <li>Land Landings: <%= capsule.land_landings %></li>
+                                    <li>Type: <%= capsule.type %></li>
+                                </ul>
+                                <p>
+                                    <br />
+                                    Launches:
+                                </p>
+                                <ul>
+                                    <% capsule.launches.forEach((launch)=> { %>
+                                        <li><%= launch %></li>
+                                    <% }); %>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

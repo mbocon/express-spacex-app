@@ -4,21 +4,19 @@
             <!-- sidebar -->
             <div class="column is-3-desktop is-12-tablet">
                 <ul class="sidenav">
-                    <li title="Crew" class="sidelist parent">
-                        <a href="/crew">Crew</a>
+                    <li title="cores" class="sidelist parent">
+                        <a href="/cores">Cores</a>
                         <ul>
                             <li class="sidelist parent active">
-                                <% let firstName=member.name.split(' ')[0]; %>
-                                <% let lastName = member.name.split(' ')[1]; %>
-                                <a href="/single-crew/<%= firstName %>/<%= lastName %>"><%= member.name %></a>
+                                <a href="/cores/<%= core.id %>">
+                                    <%= core.serial %>
+                                </a>
                             </li>
-                            <% crew.forEach((mem) => { %>
-                                <% if (mem.name !== member.name) { %>
-                                    <% let memFirstName = mem.name.split(' ')[0]; %>
-                                    <% let memLastName = mem.name.split(' ')[1]; %>
+                            <% cores.forEach((cap)=> { %>
+                                <% if (cap.id !==core.id) { %>
                                     <li class="sidelist">
-                                        <a href="/single-crew/<%= memFirstName %>/<%= memLastName %>">
-                                            <%= mem.name %>
+                                        <a href="/cores/<%= cap.id %>">
+                                            <%= cap.serial %>
                                         </a>
                                     </li>
                                 <% } %>
@@ -29,13 +27,13 @@
                         <a href="/capsules">Capsules</a>
                     </li>
                     <li class="sidelist">
-                        <a href="/cores">Cores</a>
+                        <a href="/crew">Crew</a>
                     </li>
                     <li class="sidelist">
                         <a href="/dragons">Dragons</a>
                     </li>
                     <li class="sidelist">
-                        <a href="/landpads">Landpads</a>
+                        <a href="/landpads">Landpads</a>    
                     </li>
                     <li class="sidelist">
                         <a href="/launches">Launches</a>
@@ -63,27 +61,37 @@
 
             <div class="column is-8-desktop is-12-tablet">
                 <div class="px-4">
-                    <h2 class="mb-4 has-text-weight-medium">
-                        <%= member.name %>
-                    </h2>
-                    <div class="content">
-                        <div class="card"><div class="card-content"><div class="content">
-                            <p><img src="<%= member.image %>" alt="<%= member.name %>"></p>
-                            <p><strong><a href="/single-crew/<%= firstName %>/<%= lastName %>"><%= member.name %></a></strong></p>
+                    <h2 class="mb-4 has-text-weight-medium">Cores</h2>
+                    <div class="card">
+                        <h4 class="mb-4 has-text-weight-medium"><%= core.serial %></h4>
+                        <div class="content">
+                            <% if(core.status === 'active') { %>
+                               <div class="badge changed">Active</div>
+                            <% } else if (core.status === 'inactive') { %>
+                               <div class="badge unreleased">Inactive</div>
+                            <% } else if (core.status === 'expended') { %>
+                               <div class="badge removed">Expended</div>
+                            <% } else if (core.status === 'lost') { %>
+                               <div class="badge depricated">Lost</div>
+                            <% } %>
+                            <p><%= core.last_update %></p>
                             <ul>
-                                <li>Agency: <%= member.agency %></li>
-                                <li>Status: <%= member.status %></li>
-                                <li><a href="<%= member.wikipedia %>">Wikipedia</a></li>
+                                <li>Block: <%= core.block %></li>
+                                <li>Reuse Count: <%= core.reuse_count %></li>
+                                <li>RTLS Attempts: <%= core.rtls_attempts %></li>
+                                <li>RTLS Landings: <%= core.rtls_landings %></li>
+                                <li>ASDS Attempts: <%= core.asds_attempts %></li>
+                                <li>ASDS Landings: <%= core.asds_landings %></li>
                             </ul>
                             <div class="mt-5">
                                 <h5>Launches</h5>
                                 <ul>
-                                <% member.launches.forEach((launch) => { %>
-                                    <li><%= launch %></li>
-                                <% }); %>
+                                   <% core.launches.forEach((launch) => { %>
+                                      <li><%= launch %></li>
+                                   <% }); %>
                                 </ul>
-                            </div>
-                        </div></div></div>
+                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
