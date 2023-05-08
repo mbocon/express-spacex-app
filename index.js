@@ -222,7 +222,7 @@ app.get('/company', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/company')
         .then(function (response) {
             // handle success
-            res.json({ data: response.data });
+            res.render('company', { company: response.data });
         })
         .catch(function (error) {
             res.json({ message: 'Data not found. Please try again later.' });
