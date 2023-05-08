@@ -436,7 +436,7 @@ app.get('/single-crew/:firstname/:lastname', function (req, res) {
 });
 
 app.get('/crew/new', function (req, res) {
-    return res.render('/crew/new');
+    return res.render('crew/new');
 });
 
 app.post('/crew', function (req, res) {
@@ -447,60 +447,34 @@ app.post('/crew', function (req, res) {
             let searchVal = req.body.item;
             let crewArray = [];
 
-            if(searchBy.toLowerCase() === 'serial') { // search by serial
-                response.data.forEach((core) => {
-                    if(core.serial.toUpperCase() === searchVal.toUpperCase()) {
-                        return res.redirect(`/crew/${core.id}`);
+            if(searchBy.toLowerCase() === 'name') { // search by name
+                response.data.forEach((crew) => {
+                    if (crew.name.toUpperCase() === searchVal.toUpperCase()) {
+                        let firstName = crew.name.split(' ')[0];
+                        let lastName = crew.name.split(' ')[1];
+                        return res.redirect(`/single-crew/${firstName}/${lastName}`);
                     }
                 });
             } else if(searchBy.toLowerCase() === 'id') { // search by id
-                response.data.forEach((core) => {
-                    if(core.id.toUpperCase() === searchVal.toUpperCase()) {
-                        return res.redirect(`/crew/${core.id}`);
+                response.data.forEach((crew) => {
+                    if (crew.id.toUpperCase() === searchVal.toUpperCase()) {
+                        let firstName = crew.name.split(' ')[0];
+                        let lastName = crew.name.split(' ')[1];
+                        return res.redirect(`/single-crew/${firstName}/${lastName}`);
                     }
                 });
-            } else if (searchBy.toLowerCase() === 'block') { // search by block
-                let countValue = parseInt(searchVal);
-                crewArray = response.data.filter((core) => {
-                    return core.block === countValue;
-                });
-            } else if (searchBy.toLowerCase() === 'reuse_count') { // search by reuse_count
-                let countValue = parseInt(searchVal);
-                crewArray = response.data.filter((core) => {
-                    return core.reuse_count === countValue;
-                });
-            } else if (searchBy.toLowerCase() === 'rtls_attempts') { // search by rtls_attempts
-                let countValue = parseInt(searchVal);
-                crewArray = response.data.filter((core) => {
-                    return core.rtls_attempts === countValue;
-                });
-            } else if (searchBy.toLowerCase() === 'rtls_landings') { // search by rtls_landings
-                let countValue = parseInt(searchVal);
-                crewArray = response.data.filter((core) => {
-                    return core.rtls_landings === countValue;
-                });
-            } else if (searchBy.toLowerCase() === 'asds_attempts') { // search by asds_attempts
-                let countValue = parseInt(searchVal);
-                crewArray = response.data.filter((core) => {
-                    return core.asds_attempts === countValue;
-                });
-            } else if (searchBy.toLowerCase() === 'asds_landings') { // search by asds_landings
-                let countValue = parseInt(searchVal);
-                crewArray = response.data.filter((core) => {
-                    return core.asds_landings === countValue;
-                });
-            } else if (searchBy.toLowerCase() === 'last_update') { // search by last_update
-                crewArray = response.data.filter((core) => {
-                    return core.last_update && core.last_update.trim() === searchVal.trim();
+            } else if (searchBy.toLowerCase() === 'agency') { // search by agency
+                crewArray = response.data.filter((crew) => {
+                    return crew.agency.toUpperCase() === searchVal.toUpperCase();
                 });
             } else if (searchBy.toLowerCase() === 'status') { // search by status
-                crewArray = response.data.filter((core) => {
-                    return core.status.toUpperCase() === searchVal.toUpperCase();
+                crewArray = response.data.filter((crew) => {
+                    return crew.status.toUpperCase() === searchVal.toUpperCase();
                 });
             } else if (searchBy.toLowerCase() === 'launch') { // search by launch
-                crewArray = response.data.filter((core) => {
+                crewArray = response.data.filter((crew) => {
                     let found = false;
-                    core.launches.forEach((launch) => {
+                    crew.launches.forEach((launch) => {
                         if (launch.toUpperCase() === searchVal.toUpperCase()) {
                             found = true;
                         }
@@ -559,53 +533,53 @@ app.get('/dragons/:id', function (req, res) {
 });
 
 // Return dragons by Parameter
-app.get('/dragons/*', function (req, res) {
-    axios.get('https://api.spacexdata.com/v4/dragons')
-        .then(function (response) {
+// app.get('/dragons/*', function (req, res) {
+//     axios.get('https://api.spacexdata.com/v4/dragons')
+//         .then(function (response) {
 
-            // run a for loop to search based on the key from req.params
-            const dragonArray = [];
-            for (let i in response.data) {
-                let dragon = response.data[i];
-                let userRequest = req.params['0'].split('/'); // ['serial', 'c103'] ['reuse_count', '0']
+//             // run a for loop to search based on the key from req.params
+//             const dragonArray = [];
+//             for (let i in response.data) {
+//                 let dragon = response.data[i];
+//                 let userRequest = req.params['0'].split('/'); // ['serial', 'c103'] ['reuse_count', '0']
                 
-                if(userRequest[0].toLowerCase() === 'name') { // search by name
-                    if(dragon.name.toUpperCase() === userRequest[1].toUpperCase()) {
-                        return res.json({ dragon });
-                    }
-                } else if(userRequest[0].toLowerCase() === 'id') { // search by id
-                    if(dragon.id.toUpperCase() === userRequest[1].toUpperCase()) {
-                        return res.json({ dragon });
-                    }
-                } else if (userRequest[0].toLowerCase() === 'crew_capacity') { // search by crew_capacity
-                    let crewCap = parseInt(userRequest[1]);
-                    if (dragon.crew_capacity === crewCap) {
-                        dragonArray.push(dragon);
-                    }
-                } else if (userRequest[0].toLowerCase() === 'status') { // search by status
-                    if (dragon.status === userRequest[1]) {
-                        dragonArray.push(dragon);
-                    }
-                } else if (userRequest[0].toLowerCase() === 'type') { // search by type
-                    if (dragon.type === userRequest[1]) {
-                        dragonArray.push(dragon);
-                    }
-                } else if (userRequest[0].toLowerCase() === 'active') { // search by active
-                    if ((dragon.active === true && userRequest[1].toLowerCase() === 'true') || (dragon.active === false && userRequest[1].toLowerCase() === 'false')) {
-                        dragonArray.push(dragon);
-                    }
-                } else {
-                    return res.json({ message: 'Invalid key.' });
-                }
-            }
+//                 if(userRequest[0].toLowerCase() === 'name') { // search by name
+//                     if(dragon.name.toUpperCase() === userRequest[1].toUpperCase()) {
+//                         return res.json({ dragon });
+//                     }
+//                 } else if(userRequest[0].toLowerCase() === 'id') { // search by id
+//                     if(dragon.id.toUpperCase() === userRequest[1].toUpperCase()) {
+//                         return res.json({ dragon });
+//                     }
+//                 } else if (userRequest[0].toLowerCase() === 'crew_capacity') { // search by crew_capacity
+//                     let crewCap = parseInt(userRequest[1]);
+//                     if (dragon.crew_capacity === crewCap) {
+//                         dragonArray.push(dragon);
+//                     }
+//                 } else if (userRequest[0].toLowerCase() === 'status') { // search by status
+//                     if (dragon.status === userRequest[1]) {
+//                         dragonArray.push(dragon);
+//                     }
+//                 } else if (userRequest[0].toLowerCase() === 'type') { // search by type
+//                     if (dragon.type === userRequest[1]) {
+//                         dragonArray.push(dragon);
+//                     }
+//                 } else if (userRequest[0].toLowerCase() === 'active') { // search by active
+//                     if ((dragon.active === true && userRequest[1].toLowerCase() === 'true') || (dragon.active === false && userRequest[1].toLowerCase() === 'false')) {
+//                         dragonArray.push(dragon);
+//                     }
+//                 } else {
+//                     return res.json({ message: 'Invalid key.' });
+//                 }
+//             }
             
-            if (dragonArray.length > 0) {
-                return res.json({ dragons: dragonArray });
-            } else {
-                return res.json({ message: 'No matching dragons.' });
-            }
-        });
-});
+//             if (dragonArray.length > 0) {
+//                 return res.json({ dragons: dragonArray });
+//             } else {
+//                 return res.json({ message: 'No matching dragons.' });
+//             }
+//         });
+// });
 
 app.get('/history', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/history')
