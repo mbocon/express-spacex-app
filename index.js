@@ -647,7 +647,7 @@ app.get('/history', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/history')
         .then(function (response) {
             // handle success
-            res.json({ data: response.data });
+            res.render('history', { history: response.data });
         })
         .catch(function (error) {
             res.json({ message: 'Data not found. Please try again later.' });
