@@ -1,0 +1,109 @@
+<section class="pt-5">
+  <div class="container shadow section-sm rounded">
+    <div class="columns is-multiline">
+      <!-- sidebar -->
+      <div class="column is-3-desktop is-12-tablet">
+        <ul class="sidenav">
+          <li class="sidelist">
+            <a href="/capsules">Capsules</a>
+          </li>
+          <li class="sidelist">
+            <a href="/cores">Cores</a>
+          </li>
+          <li class="sidelist">
+            <a href="/crew">Crew</a>
+          </li>
+          <li title="dragons" class="sidelist">
+            <a href="/dragons">Dragons</a>
+          </li>
+          <li class="sidelist">
+            <a href="/landpads">Landpads</a>
+          </li>
+          <li class="sidelist">
+            <a href="/launches">Launches</a>
+          </li>
+          <li class="sidelist">
+            <a href="/launchpads">Launchpads</a>
+          </li>
+          <li class="sidelist">
+            <a href="/payloads">Payloads</a>
+          </li>
+          <li class="sidelist">
+            <a href="/roadster">Roadster</a>
+          </li>
+          <li class="sidelist">
+            <a href="/rockets">Rockets</a>
+          </li>
+          <li class="sidelist">
+            <a href="/ships">Ships</a>
+          </li>
+          <li class="sidelist">
+            <a href="/starlink">Starlink</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- body -->
+      <div class="column is-8-desktop is-12-tablet">
+        <div class="px-4">
+          <h2 class="mb-4 has-text-weight-medium"><%= roadster.name %></h2> <!-- main content -->
+          <div class="content">
+            <div class="card">
+                <div class="card-content">
+                    <div class="content">
+                        <p class="i-5">
+                            <div class="card">
+                                <div class="card-image">
+                                    <figure class="image is-4by3">
+                                        <img src="<%= roadster.flickr_images[0] %>" alt="roadster">
+                                    </figure>
+                                </div>
+                                <div class="card-content">
+                                    <div class="media">
+                                        <div class="media-content">
+                                            <section>
+                                                <p class="subtitle is-size-6">
+                                                    <br />
+                                                    <%= roadster.details %><br />
+                                                    <br />
+                                                </p>
+                                            </section>
+                                            <span class="has-text-weight-medium">Flickr Images: </span>
+                                            <ul class="is-unstyled">
+                                                <% roadster.flickr_images.forEach((img) => { %>
+                                                    <li><a href="<%= img %>">img</a></li>
+                                                <% }); %>
+                                            </ul>
+                                            <span class="has-text-weight-medium"><a href="<%= roadster.wikipedia %>">Wikipedia</a></span><br />
+                                            <span class="has-text-weight-medium"><a href="<%= roadster.video %>">Video</a></span><br />
+                                            <br />
+                                            <span class="has-text-weight-medium">Launch Date: </span><%= roadster.launch_date_utc %><br />
+                                            <span class="has-text-weight-medium">Mass (kg/lbs): </span><%= roadster.launch_mass_kg %>/<%= roadster.launch_mass_lbs %><br />
+                                            <span class="has-text-weight-medium">NORAD ID: </span><%= roadster.norad_id %><br />
+                                            <span class="has-text-weight-medium">Epoch JD: </span><%= roadster.epoch_jd %><br />
+                                            <span class="has-text-weight-medium">Orbit Type: </span><%= roadster.orbit_type %><br />
+                                            <span class="has-text-weight-medium">Apoapsis AU: </span><%= roadster.apoapsis_au %><br />
+                                            <span class="has-text-weight-medium">Periapsis AU: </span><%= roadster.periapsis_au %><br />
+                                            <span class="has-text-weight-medium">Semi-Major Axis AU: </span><%= roadster.semi_major_axis_au %><br />
+                                            <span class="has-text-weight-medium">Eccentricity: </span><%= roadster.eccentricity %><br />
+                                            <span class="has-text-weight-medium">Inclination: </span><%= roadster.inclination %><br />
+                                            <span class="has-text-weight-medium">Longitude: </span><%= roadster.longitude %><br />
+                                            <span class="has-text-weight-medium">Periapsis Arg: </span><%= roadster.periapsis_arg %><br />
+                                            <span class="has-text-weight-medium">Period (days): </span><%= roadster.period_days %><br />
+                                            <span class="has-text-weight-medium">Speed (kph/mph): </span><%= roadster.speed_kph %>/<%= roadster.speed_mph %><br />
+                                            <span class="has-text-weight-medium">Earth Distance (km/mi): </span><%= roadster.earth_distance_km %>/<%= roadster.earth_distance_mi %><br />
+                                            <span class="has-text-weight-medium">Mars Distance (km/mi): </span><%= roadster.mars_distance_km %>/<%= roadster.mars_distance_mi %><br />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </p>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
