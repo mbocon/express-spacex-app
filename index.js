@@ -1088,6 +1088,30 @@ app.get('/rockets/search', function (req, res) {
     return res.render('rockets/search');
 });
 
+// Return a rocket by ID
+app.get('/rockets/:id', function (req, res) {
+    axios.get('https://api.spacexdata.com/v4/rockets')
+        .then(function (response) {
+            // handle success
+            let found = false;
+
+            for (let i in response.data) {
+                let rocket = response.data[i];
+
+                if (rocket.id === req.params.id) {
+                    return res.render('single-rocket', { rocket: response.data[i], rockets: response.data });
+                    found = true;
+                }
+            }
+            if (!found) {
+                return res.render('rockets', { data: 'Rocket does not exist.' });
+            }
+        })
+        .catch(function (error) {
+            res.json({ message: 'Data not found. Please try again later.' });
+        });
+});
+
 app.post('/rockets/search', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/rockets')
         .then(function (response) {
@@ -1168,39 +1192,20 @@ app.post('/rockets/search', function (req, res) {
         });
 });
 
-// Return a rocket by ID
-app.get('/rockets/:id', function (req, res) {
-    axios.get('https://api.spacexdata.com/v4/rockets')
-        .then(function (response) {
-            // handle success
-            let found = false;
-
-            for (let i in response.data) {
-                let rocket = response.data[i];
-
-                if (rocket.id === req.params.id) {
-                    return res.render('single-rocket', { rocket: response.data[i], rockets: response.data });
-                    found = true;
-                }
-            }
-            if (!found) {
-                return res.render('rockets', { data: 'Rocket does not exist.' });
-            }
-        })
-        .catch(function (error) {
-            res.json({ message: 'Data not found. Please try again later.' });
-        });
-});
 
 app.get('/ships', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/ships')
         .then(function (response) {
             // handle success
-            res.json({ data: response.data });
+            return res.render('ships', { ships: response.data });
         })
         .catch(function (error) {
-            res.json({ message: 'Data not found. Please try again later.' });
+            return res.json({ message: 'Data not found. Please try again later.' });
         });
+});
+
+app.get('/ships/search', function (req, res) {
+    return res.render('ships/search');
 });
 
 // Return a ship by ID
@@ -1214,16 +1219,16 @@ app.get('/ships/:id', function (req, res) {
                 let ship = response.data[i];
 
                 if (ship.id === req.params.id) {
-                    res.json({ data: response.data[i] });
+                    return res.render('single-ship', { ship: response.data[i], ships: response.data });
                     found = true;
                 }
             }
             if (!found) {
-                res.json({ data: 'Ship does not exist.' });
+                return res.render('ships', { message: 'Ship does not exist.' });
             }
         })
         .catch(function (error) {
-            res.json({ message: 'Data not found. Please try again later.' });
+            return res.json({ message: 'Data not found. Please try again later.' });
         });
 });
 
@@ -1232,6 +1237,88 @@ app.get('/starlink', function (req, res) {
         .then(function (response) {
             // handle success
             res.json({ data: response.data });
+        })
+        .catch(function (error) {
+            res.json({ message: 'Data not found. Please try again later.' });
+        });
+});
+
+app.post('/ships/search', function (req, res) {
+    axios.get('https://api.spacexdata.com/v4/ships')
+        .then(function (response) {
+
+            let searchBy = req.body.category;
+            let searchVal = req.body.item;
+            let shipArray = [];
+
+            if(searchBy.toLowerCase() === 'name') { // search by name
+                shipArray = response.data.filter((ship) => {
+                    return ship.name.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if(searchBy.toLowerCase() === 'id') { // search by id
+                shipArray = response.data.filter((ship) => {
+                    return ship.id.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'type') { // search by type
+                shipArray = response.data.filter((ship) => {
+                    return ship.type.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'status') { // search by status
+                shipArray = response.data.filter((ship) => {
+                    return ship.status && ship.status.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'active') { // search by active
+                shipArray = response.data.filter((ship) => {
+                    return ((ship.active === true && searchVal.toUpperCase() === 'TRUE') || (ship.active === false && searchVal.toUpperCase() === 'FALSE'));
+                });
+            } else if (searchBy.toLowerCase() === 'class') { // search by class\
+                searchVal = parseInt(searchVal);
+                shipArray = response.data.filter((ship) => {
+                    return ship.class && ship.class === searchVal;
+                });
+            } else if (searchBy.toLowerCase() === 'role') { // search by role
+                shipArray = response.data.filter((ship) => {
+                    let found = false;
+                    ship.roles.forEach((role) => {
+                        if (role.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else if (searchBy.toLowerCase() === 'year_built') { // search by year_built
+                searchVal = parseInt(searchVal);
+                shipArray = response.data.filter((ship) => {
+                    return ship.year_built === searchVal;
+                });
+            } else if (searchBy.toLowerCase() === 'home_port') { // search by home_port
+                shipArray = response.data.filter((ship) => {
+                    return ship.home_port && ship.home_port.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'launch') { // search by launch
+                shipArray = response.data.filter((ship) => {
+                    let found = false;
+                    ship.launches.forEach((launch) => {
+                        if (launch.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else {
+                return res.render('ships', { ships: shipArray, message: 'Invalid key.', searchBy, searchVal });
+            }
+            
+
+            if (shipArray.length > 0) {
+                if (shipArray.length === 1) {
+                    return res.redirect(`/ships/${shipArray[0].id}`);
+                } else {
+                    return res.render('ships', { message: '', ships: shipArray, searchBy, searchVal });
+                }
+            } else {
+                return res.render('ships', { message: 'No matching ship.', ships: shipArray, searchBy, searchVal });
+            }
         })
         .catch(function (error) {
             res.json({ message: 'Data not found. Please try again later.' });
