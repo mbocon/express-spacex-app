@@ -528,16 +528,16 @@ app.get('/landpads/:id', function (req, res) {
                 let landpad = response.data[i];
 
                 if (landpad.id === req.params.id) {
-                    res.render('single-landpad', { landpad: response.data[i], landpads: response.data });
+                    return res.render('single-landpad', { landpad: response.data[i], landpads: response.data });
                     found = true;
                 }
             }
             if (!found) {
-                res.render('landpads', { message: 'Landpad does not exist.' });
+                return res.render('landpads', { message: 'Landpad does not exist.' });
             }
         })
         .catch(function (error) {
-            res.json({ message: 'Data not found. Please try again later.' });
+            return res.json({ message: 'Data not found. Please try again later.' });
         });
 });
 
@@ -604,16 +604,16 @@ app.post('/landpads/search', function (req, res) {
 
             if (landpadArray.length > 0) {
                 if (landpadArray.length === 1) {
-                    res.redirect(`/landpads/${landpadArray[0].id}`);
+                    return res.redirect(`/landpads/${landpadArray[0].id}`);
                 } else {
-                    res.render('landpads', { message: '', landpads: landpadArray, searchBy, searchVal });
+                    return res.render('landpads', { message: '', landpads: landpadArray, searchBy, searchVal });
                 }
             } else {
                 return res.render('landpads', { message: 'No matching landpad.', landpads: landpadArray, searchBy, searchVal });
             }
         })
         .catch(function (error) {
-            res.json({ message: 'Data not found. Please try again later.' });
+            return res.json({ message: 'Data not found. Please try again later.' });
         });
 });
 
@@ -621,12 +621,17 @@ app.get('/launches', function (req, res) {
     axios.get('https://api.spacexdata.com/v5/launches')
         .then(function (response) {
             // handle success
-            res.json({ data: response.data });
+            return res.render('launches', { launches: response.data });
         })
         .catch(function (error) {
-            res.json({ message: 'Data not found. Please try again later.' });
+            return res.json({ message: 'Data not found. Please try again later.' });
         });
 });
+
+app.get('/launches/search', function (req, res) {
+    return res.render('launches/search');
+});
+
 
 // Return a single launch by ID
 app.get('/launches/:id', function (req, res) {
@@ -639,12 +644,137 @@ app.get('/launches/:id', function (req, res) {
                 let launch = response.data[i];
 
                 if (launch.id === req.params.id) {
-                    res.json({ data: response.data[i] });
+                    return res.render('single-launch', { launch: response.data[i], launches: response.data });
                     found = true;
                 }
             }
             if (!found) {
-                res.json({ data: 'Launch does not exist.' });
+                return res.render('launches', { message: 'Launch does not exist.' });
+            }
+        })
+        .catch(function (error) {
+            return res.json({ message: 'Data not found. Please try again later.' });
+        });
+});
+
+app.post('/launches/search', function (req, res) {
+    axios.get('https://api.spacexdata.com/v5/launches')
+        .then(function (response) {
+
+            let searchBy = req.body.category;
+            let searchVal = req.body.item;
+            let launchArray = [];
+
+            if(searchBy.toLowerCase() === 'name') { // search by name
+                launchArray = response.data.filter((launch) => {
+                    return launch.name.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if(searchBy.toLowerCase() === 'flight_number') { // search by flight_number
+                launchArray = response.data.filter((launch) => {
+                    let countValue = parseInt(searchVal);
+                    return launch.flight_number.toUpperCase() === countValue.toUpperCase();
+                });
+            } else if(searchBy.toLowerCase() === 'id') { // search by id
+                launchArray = response.data.filter((launch) => {
+                    return launch.id.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'details') { // search by details
+                launchArray = response.data.filter((launch) => {
+                    return launch.details && launch.details.toUpperCase().trim() === searchVal.toUpperCase().trim();
+                });
+            } else if (searchBy.toLowerCase() === 'upcoming') { // search by upcoming
+                launchArray = response.data.filter((launch) => {
+                    return ((launch.upcoming === true && searchVal.toUpperCase() === 'TRUE') || (launch.upcoming === false && searchVal.toUpperCase() === 'FALSE'));
+                });
+            } else if (searchBy.toLowerCase() === 'tbd') { // search by tbd
+                launchArray = response.data.filter((launch) => {
+                    return ((launch.tbd === true && searchVal.toUpperCase() === 'TRUE') || (launch.tbd === false && searchVal.toUpperCase() === 'FALSE'));
+                });
+            } else if (searchBy.toLowerCase() === 'success') { // search by success
+                launchArray = response.data.filter((launch) => {
+                    return ((launch.success === true && searchVal.toUpperCase() === 'TRUE') || (launch.success === false && searchVal.toUpperCase() === 'FALSE'));
+                });
+            } else if (searchBy.toLowerCase() === 'net') { // search by net
+                launchArray = response.data.filter((launch) => {
+                    return ((launch.net === true && searchVal.toUpperCase() === 'TRUE') || (launch.net === false && searchVal.toUpperCase() === 'FALSE'));
+                });
+            } else if (searchBy.toLowerCase() === 'date_utc') { // search by date
+                launchArray = response.data.filter((launch) => {
+                    return launch.date_utc.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'static_fire_date_utc') { // search by static_fire_date
+                launchArray = response.data.filter((launch) => {
+                    return launch.static_fire_date_utc && launch.static_fire_date_utc.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'rocket') { // search by rocket
+                launchArray = response.data.filter((launch) => {
+                    return launch.rocket.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'core') { // search by core
+                launchArray = response.data.filter((launch) => {
+                    let found = false;
+                    launch.cores.forEach((c) => {
+                        if (c.core && c.core.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else if (searchBy.toLowerCase() === 'ship') { // search by ship
+                launchArray = response.data.filter((launch) => {
+                    let found = false;
+                    launch.ships.forEach((ship) => {
+                        if (ship.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else if (searchBy.toLowerCase() === 'payload') { // search by payload
+                launchArray = response.data.filter((launch) => {
+                    let found = false;
+                    launch.payloads.forEach((payload) => {
+                        if (payload.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else if (searchBy.toLowerCase() === 'capsule') { // search by capsule
+                launchArray = response.data.filter((launch) => {
+                    let found = false;
+                    launch.capsules.forEach((capsule) => {
+                        if (capsule.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else if (searchBy.toLowerCase() === 'crew') { // search by crew
+                launchArray = response.data.filter((launch) => {
+                    let found = false;
+                    launch.crew.forEach((mem) => {
+                        if (typeof mem === 'object' && mem.crew === searchVal) {
+                            found = true;
+                        } else if (mem === searchVal) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else {
+                return res.render('launches', { launches: launchArray, message: 'Invalid key.', searchBy, searchVal });
+            }
+            
+
+            if (launchArray.length > 0) {
+                if (launchArray.length === 1) {
+                    res.redirect(`/launches/${launchArray[0].id}`);
+                } else {
+                    res.render('launches', { message: '', launches: launchArray, searchBy, searchVal });
+                }
+            } else {
+                return res.render('launches', { message: 'No matching launch.', launches: launchArray, searchBy, searchVal });
             }
         })
         .catch(function (error) {

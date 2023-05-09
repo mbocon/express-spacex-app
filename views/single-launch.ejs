@@ -1,0 +1,284 @@
+<section class="pt-6">
+    <div class="container shadow section-sm rounded">
+        <div class="columns is-multiline">
+            <!-- sidebar -->
+            <div class="column is-3-desktop is-12-tablet">
+                <ul class="sidenav">
+                    <li class="sidelist parent active">
+                      <a href="/launches">Launches</a>
+                      <ul>
+                        <li class="sidelist parent active">
+                            <a href="/launches/<%= launch.id %>">
+                                <%= launch.name %>
+                            </a>
+                        </li>
+                        <% launches.forEach((la)=> { %>
+                            <% if (la.id !== launch.id) { %>
+                                <li class="sidelist">
+                                    <a href="/launches/<%= la.id %>">
+                                        <%= la.name %>
+                                    </a>
+                                </li>
+                            <% } %>
+                        <% }); %>
+                      </ul>
+                    </li>
+                    <li class="sidelist">
+                      <a href="/capsules">Capsules</a>
+                    </li>
+                    <li class="sidelist">
+                      <a href="/cores">Cores</a>
+                    </li>
+                    <li class="sidelist">
+                      <a href="/crew">Crew</a>
+                    </li>
+                    <li class="sidelist">
+                      <a href="/dragons">Dragons</a>
+                    </li>
+                    <li class="sidelist">
+                      <a href="/landpads">Landpads</a>
+                    </li>
+                    <li class="sidelist">
+                      <a href="/launchpads">Launchpads</a>
+                    </li>
+                    <li class="sidelist">
+                      <a href="/payloads">Payloads</a>
+                    </li>
+                    <li class="sidelist">
+                      <a href="/roadster">Roadster</a>
+                    </li>
+                    <li class="sidelist">
+                      <a href="/rockets">Rockets</a>
+                    </li>
+                    <li class="sidelist">
+                      <a href="/ships">Ships</a>
+                    </li>
+                    <li class="sidelist">
+                      <a href="/starlink">Starlink</a>
+                    </li>
+                  </ul>
+            </div>
+
+            <div class="column is-8-desktop is-12-tablet">
+                <div class="px-4">
+                    <h2 class="mb-4 has-text-weight-medium">Single Launch</h2>
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="content">
+                                <p class="i-5">
+                                    <div class="card">
+                                        <% if(launch.links.patch.small) { %>
+                                            <div class="card-image">
+                                                <figure class="image is-4by3">
+                                                    <img src="<%= launch.links.patch.small %>" alt="patch">
+                                                </figure>
+                                            </div>
+                                        <% } %>
+                                        <div class="card-content">
+                                            <div class="media">
+                                                <div class="media-content">
+                                                    <p class="title is-4">
+                                                        Flight <%= launch.flight_number %>
+                                                    </p>
+                                                    <p class="subtitle is-6">
+                                                        <%= launch.name %><br />
+                                                    </p>
+                                                    <% if(launch.details) { %>
+                                                        <section>
+                                                            <p class="subtitle is-size-6">
+                                                                <%= launch.details %>
+                                                            </p>
+                                                        </section>
+                                                    <% } %>
+                                                    <br />
+                                                    <span class="has-text-weight-medium">Launchpad: </span><%= launch.launchpad %><br />
+                                                    <span class="has-text-weight-medium">Upcoming: </span><%= launch.upcoming %><br />
+                                                    <span class="has-text-weight-medium">TBD: </span><%= launch.tbd %><br />
+                                                    <span class="has-text-weight-medium">Auto Update: </span><%= launch.auto_update %><br />
+                                                    <span class="has-text-weight-medium">Date:</span> <%= launch.date_utc %><br />
+                                                    <span class="has-text-weight-medium">Static Fire Date (UTC):</span> <%= launch.static_fire_date_utc %><br />
+                                                    <span class="has-text-weight-medium">Net:</span> <%= launch.net %><br />
+                                                    <span class="has-text-weight-medium">Rocket:</span> <%= launch.rocket %><br />
+                                                    <span class="has-text-weight-medium">Success:</span> <%= launch.success %><br />
+                                                    <span class="has-text-weight-medium">Failures:</span>
+                                                    <ul class="is-unstyled">
+                                                        <% launch.failures.forEach((fail) => { %>
+                                                            <li>
+                                                                <ul class="is-unstyled">
+                                                                    <li>Time: <%= fail.time %></li>
+                                                                    <li>Altitude: <%= fail.altitude %></li>
+                                                                    <li>Reason: <%= fail.reason %></li>
+                                                                </ul>
+                                                            </li>
+                                                        <% }); %>
+                                                    </ul>
+                                                    <% if (launch.fairings) { %>
+                                                        <span class="has-text-weight-medium">Fairings:</span><br />
+                                                        <ul class="is-unstyled">
+                                                            <li>Reused: <%= launch.fairings.reused %></li>
+                                                            <li>Recovery Attempted: <%= launch.fairings.recovery_attempted %></li>
+                                                            <li>Recovered: <%= launch.fairings.recovered %></li>
+                                                            <li>
+                                                                Ships:
+                                                                <ul class="is-unstyled">
+                                                                    <% launch.fairings.ships.forEach((i) => { %>
+                                                                        <li><%= i %></li>
+                                                                    <% }); %>
+                                                                </ul>
+                                                            </li>
+                                                        </ul>
+                                                    <% } %>
+                                                    </ul><span class="has-text-weight-medium">Crew:</span>
+                                                    <ul class="is-unstyled">
+                                                        <% launch.crew.forEach((mem) => { %>
+                                                            <% if (typeof mem === 'object') { %>
+                                                                <li><%= mem.role %> - <%= mem.crew %></li>
+                                                            <% } else { %>
+                                                                <li><%= mem %></li>
+                                                            <% } %>
+                                                        <% }); %>
+                                                    </ul>
+                                                    <span class="has-text-weight-medium">Ships:</span>
+                                                    <ul class="is-unstyled">
+                                                        <% launch.ships.forEach((ship) => { %>
+                                                            <li><%= ship %></li>
+                                                        <% }); %>
+                                                    </ul>
+                                                    <span class="has-text-weight-medium">Capsules:</span>
+                                                    <ul class="is-unstyled">
+                                                        <% launch.capsules.forEach((capsule) => { %>
+                                                            <li><%= capsule %></li>
+                                                        <% }); %>
+                                                    </ul>
+                                                    <span class="has-text-weight-medium">Payloads:</span>
+                                                    <ul class="is-unstyled">
+                                                        <% launch.payloads.forEach((payload) => { %>
+                                                            <li><%= payload %></li>
+                                                            <% }); %>
+                                                        </ul>
+                                                    <span class="has-text-weight-medium">Cores:</span>
+                                                    <ul class="is-unstyled">
+                                                        <% launch.cores.forEach((core) => { %>
+                                                            <li>
+                                                                <%= core.core %>
+                                                                <ul class="is-unstyled">
+                                                                    <li>Flight: <%= core.flight %></li>
+                                                                    <li>Gridfins: <%= core.gridfins %></li>
+                                                                    <li>Legs: <%= core.legs %></li>
+                                                                    <li>Reused: <%= core.reused %></li>
+                                                                    <li>Landing Attempt: <%= core.landing_attempt %></li>
+                                                                    <li>Landing Success: <%= core.landing_success %></li>
+                                                                    <li>Landing Type: <%= core.landing_type %></li>
+                                                                    <li>Landpad: <%= core.landpad %></li>
+                                                                </ul>
+                                                            </li>
+                                                        <% }); %>
+                                                    </ul>
+                                                    <span class="has-text-weight-medium">Links: </span><br />
+                                                    <ul class="is-unstyled">
+                                                        <li>
+                                                            Patch:
+                                                            <ul class="is-unstyled">
+                                                                <li><a href="<%= launch.links.patch.large %>">Large</a></li>
+                                                                <li><a href="<%= launch.links.patch.small %>">Small</a></li>
+                                                            </ul>
+                                                        </li>
+                                                        <li>
+                                                            Reddit:
+                                                            <ul class="is-unstyled">
+                                                                <li>
+                                                                    <% if (launch.links.reddit.campaign) { %>
+                                                                        <a href="<%= launch.links.reddit.campaign %>">
+                                                                            <% } %>
+                                                                    Campaign
+                                                                    <% if (launch.links.reddit.campaign) { %>
+                                                                        </a>
+                                                                        <% } %>
+                                                                    </li>
+                                                                    <li>
+                                                                        <% if (launch.links.reddit.launch) { %>
+                                                                        <a href="<%= launch.links.reddit.launch %>">
+                                                                            <% } %>
+                                                                            Launch
+                                                                            <% if (launch.links.reddit.launch) { %>
+                                                                        </a>
+                                                                        <% } %>
+                                                                </li>
+                                                                <li>
+                                                                    <% if (launch.links.reddit.media) { %>
+                                                                        <a href="<%= launch.links.reddit.media %>">
+                                                                    <% } %>
+                                                                    Media
+                                                                    <% if (launch.links.reddit.media) { %>
+                                                                        </a>
+                                                                    <% } %>
+                                                                </li>
+                                                                <li>
+                                                                    <% if (launch.links.reddit.recovery) { %>
+                                                                        <a href="<%= launch.links.reddit.recovery %>">
+                                                                    <% } %>
+                                                                    Recovery
+                                                                    <% if (launch.links.reddit.recovery) { %>
+                                                                        </a>
+                                                                    <% } %>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                        <li>
+                                                            Flickr:
+                                                            <ul class="is-unstyled">
+                                                                <% launch.links.flickr.original.forEach((i) => { %>
+                                                                    <li><a href="<%= i %>">image</a></li>
+                                                                <% }); %>
+                                                            </ul>
+                                                        </li>
+                                                        <li>
+                                                            <% if (launch.links.presskit) { %>
+                                                                <a href="<%= launch.links.presskit %>">
+                                                            <% } %>    
+                                                            Presskit
+                                                            <% if (launch.links.presskit) { %>
+                                                                </a>
+                                                            <% } %>  
+                                                        </li>
+                                                        <li>
+                                                            <% if (launch.links.webcast) { %>
+                                                                <a href="<%= launch.links.webcast %>">
+                                                            <% } %>    
+                                                            Webcast
+                                                            <% if (launch.links.webcast) { %>
+                                                                </a>
+                                                            <% } %>  
+                                                        </li>
+                                                        <li>
+                                                            <% if (launch.links.Article) { %>
+                                                            <a href="<%= launch.links.Article %>">
+                                                            <% } %>    
+                                                            Article
+                                                            <% if (launch.links.Article) { %>
+                                                                </a>
+                                                            <% } %> 
+                                                        </li>
+                                                        <li>
+                                                            <% if (launch.links.wikipedia) { %>
+                                                                <a href="<%= launch.links.wikipedia %>">
+                                                            <% } %>    
+                                                            Wikipedia
+                                                            <% if (launch.links.wikipedia) { %>
+                                                                </a>
+                                                            <% } %>  
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p>
+                            </div>
+                        </div>
+                    </div>    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
