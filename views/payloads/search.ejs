@@ -1,0 +1,43 @@
+<section class="section">
+   <div class="container">
+      <div class="columns is-desktop is-justify-content-center">
+         <div class="column is-8-desktop">
+            <div class="p-6 shadow rounded content">
+                <h2 class="section-title">Search Payloads</h2>
+                <form method="POST" action="/payloads/search">
+                    <div class="columns is-multiline">
+                        <div class="form-group column is-12">
+                            <label for="category">Search By</label>
+                            <select id="category" class="input custom-select" name="category" required>
+                                <option selected disabled>Choose Category</option>
+                                <option value="name">Name</option>
+                                <option value="type">Type</option>
+                                <option value="customer">Customer</option>
+                                <option value="manufacturer">Manufacturer</option>
+                                <option value="nationality">Nationality</option>
+                                <option value="norad_id">Norad ID</option>
+                                <option value="capsule">Capsule</option>
+                                <option value="reused">Reused</option>
+                                <option value="launch">Launch</option>
+                                <option value="orbit">Orbit</option>
+                                <option value="reference_system">Reference System</option>
+                                <option value="regime">Regime</option>
+                                <option value="lifespan">Lifespan</option>
+                                <option value="id">ID</option>
+                            </select>
+                        </div>
+                        <div class="form-group column is-6-desktop">
+                            <label for="item">Search For</label>
+                            <input type="text" class="input" id="item" name="item" placeholder="Search Term"
+                           required>
+                        </div>
+                        <div class="column is-12">
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </div>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   </div>
+</section>

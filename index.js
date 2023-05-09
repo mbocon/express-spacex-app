@@ -915,11 +915,15 @@ app.get('/payloads', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/payloads')
         .then(function (response) {
             // handle success
-            res.json({ data: response.data });
+            return res.render('payloads', { payloads: response.data });
         })
         .catch(function (error) {
-            res.json({ message: 'Data not found. Please try again later.' });
+            return res.json({ message: 'Data not found. Please try again later.' });
         });
+});
+
+app.get('/payloads/search', function (req, res) {
+    return res.render('payloads/search');
 });
 
 // Return a single payload by ID
@@ -933,12 +937,124 @@ app.get('/payloads/:id', function (req, res) {
                 let payload = response.data[i];
 
                 if (payload.id === req.params.id) {
-                    res.json({ data: response.data[i] });
+                    return res.render('single-payload', { payload: response.data[i], payloads: response.data });
                     found = true;
                 }
             }
             if (!found) {
-                res.json({ data: 'Payload does not exist.' });
+                return res.json({ data: 'Payload does not exist.' });
+            }
+        })
+        .catch(function (error) {
+            return res.json({ message: 'Data not found. Please try again later.' });
+        });
+});
+
+app.post('/payloads/search', function (req, res) {
+    axios.get('https://api.spacexdata.com/v4/payloads')
+        .then(function (response) {
+
+            let searchBy = req.body.category;
+            let searchVal = req.body.item;
+            let payloadArray = [];
+
+            if(searchBy.toLowerCase() === 'name') { // search by name
+                payloadArray = response.data.filter((payload) => {
+                    return payload.name.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if(searchBy.toLowerCase() === 'id') { // search by id
+                payloadArray = response.data.filter((payload) => {
+                    return payload.id.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'type') { // search by type
+                payloadArray = response.data.filter((payload) => {
+                    return payload.type.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'customer') { // search by customer
+                payloadArray = response.data.filter((payload) => {
+                    let found = false;
+                    payload.customers.forEach((cust) => {
+                        if (cust.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else if (searchBy.toLowerCase() === 'manufacturer') { // search by manufacturer
+                payloadArray = response.data.filter((payload) => {
+                    let found = false;
+                    payload.manufacturers.forEach((man) => {
+                        if (man.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else if (searchBy.toLowerCase() === 'nationality') { // search by nationality
+                payloadArray = response.data.filter((payload) => {
+                    let found = false;
+                    payload.nationalities.forEach((nat) => {
+                        if (nat.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else if (searchBy.toLowerCase() === 'norad_id') { // search by norad_id
+                searchVal = parseInt(searchVal);
+                payloadArray = response.data.filter((payload) => {
+                    let found = false;
+                    if (payload.norad_ids.length) {
+                        payload.norad_ids.forEach((id) => {
+                            if (id === searchVal) {
+                                found = true;
+                            }
+                        });
+                    }
+                    return found;
+                });
+            } else if (searchBy.toLowerCase() === 'capsule') { // search by capsule
+                payloadArray = response.data.filter((payload) => {
+                    return payload.dragon.capsule && payload.dragon.capsule.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'reused') { // search by reused
+                payloadArray = response.data.filter((payload) => {
+                    return ((payload.reused === true && searchVal.toUpperCase() === 'TRUE') || (payload.reused === false && searchVal.toUpperCase() === 'FALSE'));
+                });
+            } else if (searchBy.toLowerCase() === 'launch') { // search by launch
+                payloadArray = response.data.filter((payload) => {
+                    return payload.launch && payload.launch.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'orbit') { // search by orbit
+                payloadArray = response.data.filter((payload) => {
+                    return payload.orbit && payload.orbit.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'reference_system') { // search by reference_system
+                payloadArray = response.data.filter((payload) => {
+                    return payload.reference_system && payload.reference_system.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'regime') { // search by regime
+                payloadArray = response.data.filter((payload) => {
+                    return payload.regime && payload.regime.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'lifespan') { // search by lifespan
+                searchVal = parseInt(searchVal);
+                payloadArray = response.data.filter((payload) => {
+                    return payload.lifespan_years === searchVal;
+                });
+            } else {
+                return res.render('payloads', { payloads: payloadArray, message: 'Invalid key.', searchBy, searchVal });
+            }
+            
+
+            if (payloadArray.length > 0) {
+                if (payloadArray.length === 1) {
+                    return res.redirect(`/payloads/${payloadArray[0].id}`);
+                } else {
+                    return res.render('payloads', { message: '', payloads: payloadArray, searchBy, searchVal });
+                }
+            } else {
+                return res.render('payloads', { message: 'No matching payload.', payloads: payloadArray, searchBy, searchVal });
             }
         })
         .catch(function (error) {

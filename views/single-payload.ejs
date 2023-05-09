@@ -1,0 +1,129 @@
+<section class="pt-6">
+    <div class="container shadow section-sm rounded">
+        <div class="columns is-multiline">
+            <!-- sidebar -->
+            <div class="column is-3-desktop is-12-tablet">
+                <ul class="sidenav">
+                    <li title="payloads" class="sidelist parent active">
+                        <a href="/payloads">Payloads</a>
+                        <ul>
+                            <li class="sidelist parent active">
+                                <a href="/payloads/<%= payload.id %>"><%= payload.name %></a>
+                            </li>
+                            <% payloads.forEach((pl)=> { %>
+                                <% if (pl.name !== payload.name) { %>
+                                    <li class="sidelist">
+                                        <a href="/payloads/<%= pl.id %>"><%= pl.name %></a>
+                                    </li>
+                                <% } %>
+                            <% }); %>
+                        </ul>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/capsules">Capsules</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/cores">Cores</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/crew">Crew</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/dragons">Dragons</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/landpads">Landpads</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/launches">Launches</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/launchpads">Launchpads</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/roadster">Roadster</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/rockets">Rockets</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/ships">Ships</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/starlink">Starlink</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="column is-8-desktop is-12-tablet">
+                <div class="px-4">
+                    <h2 class="mb-4 has-text-weight-medium">Single Payload</h2>
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="media">
+                                <div class="media-content">
+                                    <p class="title is-4"><%= payload.name %></p>
+                                    <span class="has-text-weight-medium">Type: </span><%= payload.type %><br />
+                                    <span class="has-text-weight-medium">Customers: </span>
+                                    <ul class="is-unstyled">
+                                        <% payload.customers.forEach((cust) => { %>
+                                            <li><%= cust %></li>
+                                        <% }); %>
+                                    </ul>
+                                    <span class="has-text-weight-medium">Manufacturers: </span>
+                                    <ul class="is-unstyled">
+                                        <% payload.manufacturers.forEach((man) => { %>
+                                            <li><%= man %></li>
+                                        <% }); %>
+                                    </ul>
+                                    <span class="has-text-weight-medium">Nationalities: </span>
+                                    <ul class="is-unstyled">
+                                        <% payload.nationalities.forEach((nat) => { %>
+                                            <li><%= nat %></li>
+                                        <% }); %>
+                                    </ul>
+                                    <span class="has-text-weight-medium">NORAD IDs: </span>
+                                    <ul class="is-unstyled">
+                                        <% payload.norad_ids.forEach((id) => { %>
+                                            <li><%= id %></li>
+                                        <% }); %>
+                                    </ul>
+                                    <% if (payload.dragon.capsule) { %>
+                                        <span class="has-text-weight-medium">Dragon: </span>
+                                        <ul class="is-unstyled">
+                                            <li>Capsule: <%= payload.dragon.capsule %></li>
+                                            <li>Mass Returned (kg/lbs): <%= payload.dragon.mass_returned_kg %>/<%= payload.dragon.mass_returned_lbs %></li>
+                                            <li>Flight Time (seconds): <%= payload.dragon.flight_time_sec %></li>
+                                            <li><a href="<%= payload.dragon.manifest %>">Manifest</a></li>
+                                            <li>Water Landing: <%= payload.dragon.water_landing %></li>
+                                            <li>Land Landing: <%= payload.dragon.land_landing %></li>
+                                        </ul>
+                                    <% } %>
+                                    <span class="has-text-weight-medium">Reused: </span><%= payload.reused %><br />
+                                    <span class="has-text-weight-medium">Launch: </span><%= payload.launch %><br />
+                                    <span class="has-text-weight-medium">Mass (kg/lbs): </span><%= payload.mass_kg %>/<%= payload.mass_lbs %><br />
+                                    <span class="has-text-weight-medium">Orbit: </span><%= payload.orbit %><br />
+                                    <span class="has-text-weight-medium">Reference System: </span><%= payload.reference_system %><br />
+                                    <span class="has-text-weight-medium">Regime: </span><%= payload.regime %><br />
+                                    <span class="has-text-weight-medium">Longitude: </span><%= payload.longitude %><br />
+                                    <span class="has-text-weight-medium">Semi-Major Axis (km): </span><%= payload.semi_major_axis_km %><br />
+                                    <span class="has-text-weight-medium">Eccentricity: </span><%= payload.eccentricity %><br />
+                                    <span class="has-text-weight-medium">Periapsis (km): </span><%= payload.periapsis_km %><br />
+                                    <span class="has-text-weight-medium">Apoapsis (km): </span><%= payload.apoapsis_km %><br />
+                                    <span class="has-text-weight-medium">Inclination (deg): </span><%= payload.inclination_deg %><br />
+                                    <span class="has-text-weight-medium">Period (min): </span><%= payload.period_min %><br />
+                                    <span class="has-text-weight-medium">Lifespan (years): </span><%= payload.lifespan_years %><br />
+                                    <span class="has-text-weight-medium">Epoch: </span><%= payload.epoch %><br />
+                                    <span class="has-text-weight-medium">Mean Motion: </span><%= payload.mean_motion %><br />
+                                    <span class="has-text-weight-medium">RAAN: </span><%= payload.raan %><br />
+                                    <span class="has-text-weight-medium">Arg Of Pericenter: </span><%= payload.arg_of_pericenter %><br />
+                                    <span class="has-text-weight-medium">Mean Anomaly: </span><%= payload.mean_anomaly %><br />
+                                </div>
+                            </div>
+                        </div>
+                    </div>       
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
