@@ -67,7 +67,7 @@ app.get('/capsules/search', function (req, res) {
     return res.render('capsules/search', )
 });
 
-// Return a single capsule
+// Return a single capsule by ID
 app.get('/capsules/:id', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/capsules')
         .then(function (response) {
@@ -83,7 +83,7 @@ app.get('/capsules/:id', function (req, res) {
                 }
             }
             if (!found) {
-                res.json({ data: 'Capsule does not exist.' });
+                res.render('capsules', { message: 'Capsule does not exist.' });
             }
         })
         .catch(function (error) {
@@ -100,16 +100,12 @@ app.post('/capsules/search', function (req, res) {
             let capsuleArray = [];
 
             if(searchBy.toLowerCase() === 'serial') { // search by serial
-                response.data.forEach((capsule) => {
-                    if(capsule.serial.toUpperCase() === searchVal.toUpperCase()) {
-                        return res.redirect(`/capsules/${capsule.id}`);
-                    }
+                capsuleArray = response.data.filter((capsule) => {
+                    return capsule.serial.toUpperCase() === searchVal.toUpperCase();
                 });
             } else if(searchBy.toLowerCase() === 'id') { // search by id
-                response.data.forEach((capsule) => {
-                    if(capsule.id.toUpperCase() === searchVal.toUpperCase()) {
-                        return res.redirect(`/capsules/${capsule.id}`);
-                    }
+                capsuleArray = response.data.filter((capsule) => {
+                    return capsule.id.toUpperCase() === searchVal.toUpperCase();
                 });
             } else if (searchBy.toLowerCase() === 'reuse_count') { // search by reuse_count
                 let countValue = parseInt(searchVal);
@@ -152,9 +148,12 @@ app.post('/capsules/search', function (req, res) {
                 return res.render('capsules', { capsules: capsuleArray, message: 'Invalid key.', searchBy, searchVal });
             }
             
-
             if (capsuleArray.length > 0) {
-                res.render('capsules', { message: '', capsules: capsuleArray, searchBy, searchVal });
+                if (capsuleArray.length === 1) {
+                    res.redirect(`/capsules/${capsuleArray[0].id}`);
+                } else {
+                    res.render('capsules', { message: '', capsules: capsuleArray, searchBy, searchVal });
+                }
             } else {
                 return res.render('capsules', { message: 'No matching capsules.', capsules: capsuleArray, searchBy, searchVal });
             }
@@ -163,60 +162,6 @@ app.post('/capsules/search', function (req, res) {
             res.json({ message: 'Data not found. Please try again later.' });
         });
 });
-
-// Return Capsules by Parameter
-// app.get('/capsules/*', function (req, res) {
-//     axios.get('https://api.spacexdata.com/v4/capsules')
-//         .then(function (response) {
-
-//             // run a for loop to search based on the key from req.params
-//             const capsuleArray = [];
-//             for (let i in response.data) {
-//                 let capsule = response.data[i];
-//                 let userRequest = req.params['0'].split('/'); // ['serial', 'c103'] ['reuse_count', '0']
-                
-//                 if(userRequest[0].toLowerCase() === 'serial') { // search by serial
-//                     if(capsule.serial.toUpperCase() === userRequest[1].toUpperCase()) {
-//                         return res.json({ capsule });
-//                     }
-//                 } else if(userRequest[0].toLowerCase() === 'id') { // search by id
-//                     if(capsule.id.toUpperCase() === userRequest[1].toUpperCase()) {
-//                         return res.json({ capsule });
-//                     }
-//                 } else if (userRequest[0].toLowerCase() === 'reuse_count') { // search by reuse_count
-//                     let countValue = parseInt(userRequest[1]);
-//                     if (capsule.reuse_count === countValue) {
-//                         capsuleArray.push(capsule);
-//                     }
-//                 } else if (userRequest[0].toLowerCase() === 'water_landings') { // search by water_landings
-//                     let countValue = parseInt(userRequest[1]);
-//                     if (capsule.water_landings === countValue) {
-//                         capsuleArray.push(capsule);
-//                     }
-//                 } else if (userRequest[0].toLowerCase() === 'last_update') { // search by last_update
-//                     if (capsule.last_update === userRequest[1]) {
-//                         capsuleArray.push(capsule);
-//                     }
-//                 } else if (userRequest[0].toLowerCase() === 'status') { // search by status
-//                     if (capsule.status === userRequest[1]) {
-//                         capsuleArray.push(capsule);
-//                     }
-//                 } else if (userRequest[0].toLowerCase() === 'type') { // search by type
-//                     if (capsule.type === userRequest[1]) {
-//                         capsuleArray.push(capsule);
-//                     }
-//                 } else {
-//                     return res.json({ message: 'Invalid key.' });
-//                 }
-//             }
-            
-//             if (capsuleArray.length > 0) {
-//                 return res.json({ capsules: capsuleArray });
-//             } else {
-//                 return res.json({ message: 'No matching capsules.' });
-//             }
-//         });
-// });
 
 app.get('/company', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/company')
@@ -244,7 +189,7 @@ app.get('/cores/search', function (req, res) {
     return res.render('cores/search');
 });
 
-// Return a single core by Serial
+// Return a single core by ID
 app.get('/cores/:id', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/cores')
         .then(function (response) {
@@ -260,7 +205,7 @@ app.get('/cores/:id', function (req, res) {
                 }
             }
             if (!found) {
-                res.json({ data: 'Core does not exist.' });
+                res.render('cores', { message: 'Core does not exist.' });
             }
         })
         .catch(function (error) {
@@ -277,16 +222,12 @@ app.post('/cores/search', function (req, res) {
             let coreArray = [];
 
             if(searchBy.toLowerCase() === 'serial') { // search by serial
-                response.data.forEach((core) => {
-                    if(core.serial.toUpperCase() === searchVal.toUpperCase()) {
-                        return res.redirect(`/cores/${core.id}`);
-                    }
+                coreArray = response.data.filter((core) => {
+                    return core.serial.toUpperCase() === searchVal.toUpperCase();
                 });
             } else if(searchBy.toLowerCase() === 'id') { // search by id
-                response.data.forEach((core) => {
-                    if(core.id.toUpperCase() === searchVal.toUpperCase()) {
-                        return res.redirect(`/cores/${core.id}`);
-                    }
+                coreArray = response.data.filter((core) => {
+                    return core.id.toUpperCase() === searchVal.toUpperCase();
                 });
             } else if (searchBy.toLowerCase() === 'block') { // search by block
                 let countValue = parseInt(searchVal);
@@ -342,7 +283,11 @@ app.post('/cores/search', function (req, res) {
             
 
             if (coreArray.length > 0) {
-                res.render('cores', { message: '', cores: coreArray, searchBy, searchVal });
+                if (coreArray.length === 1) {
+                    return res.redirect(`/cores/${coreArray[0].id}`);
+                } else {
+                    return res.render('cores', { message: '', cores: coreArray, searchBy, searchVal });
+                }
             } else {
                 return res.render('cores', { message: 'No matching cores.', cores: coreArray, searchBy, searchVal });
             }
@@ -351,52 +296,6 @@ app.post('/cores/search', function (req, res) {
             res.json({ message: 'Data not found. Please try again later.' });
         });
 });
-
-// Return cores by Parameter
-// app.get('/cores/*', function (req, res) {
-//     axios.get('https://api.spacexdata.com/v4/cores')
-//         .then(function (response) {
-
-//             // run a for loop to search based on the key from req.params
-//             const coreArray = [];
-//             for (let i in response.data) {
-//                 let core = response.data[i];
-//                 let userRequest = req.params['0'].split('/'); // ['serial', 'c103'] ['reuse_count', '0']
-                
-//                 if(userRequest[0].toLowerCase() === 'serial') { // search by serial
-//                     if(core.serial.toUpperCase() === userRequest[1].toUpperCase()) {
-//                         return res.json({ core });
-//                     }
-//                 } else if(userRequest[0].toLowerCase() === 'last_update') { // search by last_update
-//                     if(core.last_update === userRequest[1]) {
-//                         coreArray.push(core);
-//                     }
-//                 } else if (userRequest[0].toLowerCase() === 'reuse_count') { // search by reuse_count
-//                     let countValue = parseInt(userRequest[1]);
-//                     if (core.reuse_count === countValue) {
-//                         coreArray.push(core);
-//                     }
-//                 } else if (userRequest[0].toLowerCase() === 'rtls_landings') { // search by rtls_landings
-//                     let countValue = parseInt(userRequest[1]);
-//                     if (core.rtls_landings === countValue) {
-//                         coreArray.push(core);
-//                     }
-//                 } else if(userRequest[0].toLowerCase() === 'status') { // search by status
-//                     if(core.status === userRequest[1]) {
-//                         coreArray.push(core);
-//                     }
-//                 } else {
-//                     return res.json({ message: 'Invalid key.' });
-//                 }
-//             }
-            
-//             if (coreArray.length > 0) {
-//                 return res.json({ cores: coreArray });
-//             } else {
-//                 return res.json({ message: 'No matching cores.' });
-//             }
-//         });
-// });
 
 app.get('/crew', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/crew')
@@ -431,7 +330,7 @@ app.get('/crew/:firstname/:lastname', function (req, res) {
             }
         }
         if (!found) {
-            res.json({ data: 'Crew member does not exist.' });
+            res.json('crew', { message: 'Crew member does not exist.' });
         }
     })
     .catch(function (error) {
@@ -449,20 +348,12 @@ app.post('/crew/search', function (req, res) {
             let crewArray = [];
 
             if(searchBy.toLowerCase() === 'name') { // search by name
-                response.data.forEach((crew) => {
-                    if (crew.name.toUpperCase() === searchVal.toUpperCase()) {
-                        let firstName = crew.name.split(' ')[0];
-                        let lastName = crew.name.split(' ')[1];
-                        return res.redirect(`/crew/${firstName}/${lastName}`);
-                    }
+                crewArray = response.data.filter((crew) => {
+                    return crew.name.toUpperCase() === searchVal.toUpperCase();
                 });
             } else if(searchBy.toLowerCase() === 'id') { // search by id
-                response.data.forEach((crew) => {
-                    if (crew.id.toUpperCase() === searchVal.toUpperCase()) {
-                        let firstName = crew.name.split(' ')[0];
-                        let lastName = crew.name.split(' ')[1];
-                        return res.redirect(`/crew/${firstName}/${lastName}`);
-                    }
+                crewArray = response.data.filter((crew) => {
+                    return crew.id.toUpperCase() === searchVal.toUpperCase();
                 });
             } else if (searchBy.toLowerCase() === 'agency') { // search by agency
                 crewArray = response.data.filter((crew) => {
@@ -488,7 +379,13 @@ app.post('/crew/search', function (req, res) {
             
 
             if (crewArray.length > 0) {
-                res.render('crew', { message: '', crew: crewArray, searchBy, searchVal });
+                if (crewArray.length === 1) {
+                    let firstName = crewArray[0].name.split(' ')[0];
+                    let lastName = crewArray[0].name.split(' ')[1];
+                    return res.redirect(`/crew/${firstName}/${lastName}`);
+                } else {
+                    res.render('crew', { message: '', crew: crewArray, searchBy, searchVal });
+                }
             } else {
                 return res.render('crew', { message: 'No matching crew.', crew: crewArray, searchBy, searchVal });
             }
@@ -529,7 +426,7 @@ app.get('/dragons/:id', function (req, res) {
                 }
             }
             if (!found) {
-                return res.json({ data: 'Dragon does not exist.' });
+                return res.render('dragons', { message: 'Dragon does not exist.' });
             }
         })
         .catch(function (error) {
@@ -547,16 +444,12 @@ app.post('/dragons/search', function (req, res) {
             let dragonArray = [];
 
             if(searchBy.toLowerCase() === 'name') { // search by name
-                response.data.forEach((dragon) => {
-                    if (dragon.name.toUpperCase() === searchVal.toUpperCase()) {
-                        return res.redirect(`/dragons/${dragon.id}`);
-                    }
+                dragonArray = response.data.filter((dragon) => {
+                    return dragon.name.toUpperCase() === searchVal.toUpperCase();
                 });
             } else if(searchBy.toLowerCase() === 'id') { // search by id
-                response.data.forEach((dragon) => {
-                    if (dragon.id.toUpperCase() === searchVal.toUpperCase()) {
-                        return res.redirect(`/dragons/${dragon.id}`);
-                    }
+                dragonArray = response.data.filter((dragon) => {
+                    return dragon.id.toUpperCase() === searchVal.toUpperCase();
                 });
             } else if (searchBy.toLowerCase() === 'type') { // search by type
                 dragonArray = response.data.filter((dragon) => {
@@ -584,7 +477,11 @@ app.post('/dragons/search', function (req, res) {
             
 
             if (dragonArray.length > 0) {
-                res.render('dragons', { message: '', dragons: dragonArray, searchBy, searchVal });
+                if (dragonArray.length === 1) {
+                    return res.redirect(`/dragons/${dragonArray[0].id}`);
+                } else {
+                    return res.render('dragons', { message: '', dragons: dragonArray, searchBy, searchVal });
+                }
             } else {
                 return res.render('dragons', { message: 'No matching dragon.', dragons: dragonArray, searchBy, searchVal });
             }
@@ -593,55 +490,6 @@ app.post('/dragons/search', function (req, res) {
             res.json({ message: 'Data not found. Please try again later.' });
         });
 });
-
-// Return dragons by Parameter
-// app.get('/dragons/*', function (req, res) {
-//     axios.get('https://api.spacexdata.com/v4/dragons')
-//         .then(function (response) {
-
-//             // run a for loop to search based on the key from req.params
-//             const dragonArray = [];
-//             for (let i in response.data) {
-//                 let dragon = response.data[i];
-//                 let userRequest = req.params['0'].split('/'); // ['serial', 'c103'] ['reuse_count', '0']
-                
-//                 if(userRequest[0].toLowerCase() === 'name') { // search by name
-//                     if(dragon.name.toUpperCase() === userRequest[1].toUpperCase()) {
-//                         return res.json({ dragon });
-//                     }
-//                 } else if(userRequest[0].toLowerCase() === 'id') { // search by id
-//                     if(dragon.id.toUpperCase() === userRequest[1].toUpperCase()) {
-//                         return res.json({ dragon });
-//                     }
-//                 } else if (userRequest[0].toLowerCase() === 'crew_capacity') { // search by crew_capacity
-//                     let crewCap = parseInt(userRequest[1]);
-//                     if (dragon.crew_capacity === crewCap) {
-//                         dragonArray.push(dragon);
-//                     }
-//                 } else if (userRequest[0].toLowerCase() === 'status') { // search by status
-//                     if (dragon.status === userRequest[1]) {
-//                         dragonArray.push(dragon);
-//                     }
-//                 } else if (userRequest[0].toLowerCase() === 'type') { // search by type
-//                     if (dragon.type === userRequest[1]) {
-//                         dragonArray.push(dragon);
-//                     }
-//                 } else if (userRequest[0].toLowerCase() === 'active') { // search by active
-//                     if ((dragon.active === true && userRequest[1].toLowerCase() === 'true') || (dragon.active === false && userRequest[1].toLowerCase() === 'false')) {
-//                         dragonArray.push(dragon);
-//                     }
-//                 } else {
-//                     return res.json({ message: 'Invalid key.' });
-//                 }
-//             }
-            
-//             if (dragonArray.length > 0) {
-//                 return res.json({ dragons: dragonArray });
-//             } else {
-//                 return res.json({ message: 'No matching dragons.' });
-//             }
-//         });
-// });
 
 app.get('/history', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/history')
@@ -658,11 +506,15 @@ app.get('/landpads', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/landpads')
         .then(function (response) {
             // handle success
-            res.json({ data: response.data });
+            res.render('landpads', { landpads: response.data });
         })
         .catch(function (error) {
             res.json({ message: 'Data not found. Please try again later.' });
         });
+});
+
+app.get('/landpads/search', function (req, res) {
+    return res.render('landpads/search');
 });
 
 // Return a single landpad by ID
@@ -676,12 +528,12 @@ app.get('/landpads/:id', function (req, res) {
                 let landpad = response.data[i];
 
                 if (landpad.id === req.params.id) {
-                    res.json({ data: response.data[i] });
+                    res.render('single-landpad', { landpad: response.data[i], landpads: response.data });
                     found = true;
                 }
             }
             if (!found) {
-                res.json({ data: 'Landpad does not exist.' });
+                res.render('landpads', { message: 'Landpad does not exist.' });
             }
         })
         .catch(function (error) {
@@ -689,50 +541,81 @@ app.get('/landpads/:id', function (req, res) {
         });
 });
 
-// Return landpads by Parameter
-// app.get('/landpads/*', function (req, res) {
-//     axios.get('https://api.spacexdata.com/v4/landpads')
-//         .then(function (response) {
+app.post('/landpads/search', function (req, res) {
+    axios.get('https://api.spacexdata.com/v4/landpads')
+        .then(function (response) {
 
-//             // run a for loop to search based on the key from req.params
-//             const landpadArray = [];
-//             for (let i in response.data) {
-//                 let landpad = response.data[i];
-//                 let userRequest = req.params['0'].split('/'); // ['serial', 'c103'] ['reuse_count', '0']
-                
-//                 if(userRequest[0].toLowerCase() === 'full_name') { // search by full_name
-//                     if(landpad.full_name.toUpperCase() === userRequest[1].toUpperCase()) {
-//                         return res.json({ landpad });
-//                     }
-//                 } else if(userRequest[0].toLowerCase() === 'id') { // search by id
-//                     if(landpad.id.toUpperCase() === userRequest[1].toUpperCase()) {
-//                         return res.json({ landpad });
-//                     }
-//                 } else if(userRequest[0].toLowerCase() === 'region') { // search by region
-//                     if(landpad.region.toUpperCase() === userRequest[1].toUpperCase()) {
-//                         return res.json({ landpad });
-//                     }
-//                 }else if (userRequest[0].toLowerCase() === 'landing_attempts') { // search by landing_attempts
-//                     let landAttempts = parseInt(userRequest[1]);
-//                     if (landpad.landing_attempts === landAttempts) {
-//                         landpadArray.push(landpad);
-//                     }
-//                 } else if (userRequest[0].toLowerCase() === 'type') { // search by type
-//                     if (landpad.type === userRequest[1]) {
-//                         landpadArray.push(landpad);
-//                     }
-//                 } else {
-//                     return res.json({ message: 'Invalid key.' });
-//                 }
-//             }
+            let searchBy = req.body.category;
+            let searchVal = req.body.item;
+            let landpadArray = [];
+
+            if(searchBy.toLowerCase() === 'name') { // search by name
+                landpadArray = response.data.filter((landpad) => {
+                    return landpad.name.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if(searchBy.toLowerCase() === 'full_name') { // search by full_name
+                landpadArray = response.data.filter((landpad) => {
+                    return landpad.full_name.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if(searchBy.toLowerCase() === 'id') { // search by id
+                landpadArray = response.data.filter((landpad) => {
+                    return landpad.id.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'description') { // search by description
+                landpadArray = response.data.filter((landpad) => {
+                    return landpad.description && landpad.description.toUpperCase().trim() === searchVal.toUpperCase().trim();
+                });
+            } else if (searchBy.toLowerCase() === 'type') { // search by type
+                landpadArray = response.data.filter((landpad) => {
+                    return landpad.type.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'status') { // search by status
+                landpadArray = response.data.filter((landpad) => {
+                    return landpad.status.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'locality') { // search by locality
+                landpadArray = response.data.filter((landpad) => {
+                    return landpad.locality.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'landing_attempts') { // search by landing_attempts
+                let countValue = parseInt(searchVal);
+                landpadArray = response.data.filter((landpad) => {
+                    return landpad.landing_attempts === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'landing_successes') { // search by landing_successes
+                let countValue = parseInt(searchVal);
+                landpadArray = response.data.filter((landpad) => {
+                    return landpad.landing_successes === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'launch') { // search by launch
+                landpadArray = response.data.filter((landpad) => {
+                    let found = false;
+                    landpad.launches.forEach((launch) => {
+                        if (launch.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else {
+                return res.render('landpads', { landpads: landpadArray, message: 'Invalid key.', searchBy, searchVal });
+            }
             
-//             if (landpadArray.length > 0) {
-//                 return res.json({ landpads: landpadArray });
-//             } else {
-//                 return res.json({ message: 'No matching landpads.' });
-//             }
-//         });
-// });
+
+            if (landpadArray.length > 0) {
+                if (landpadArray.length === 1) {
+                    res.redirect(`/landpads/${landpadArray[0].id}`);
+                } else {
+                    res.render('landpads', { message: '', landpads: landpadArray, searchBy, searchVal });
+                }
+            } else {
+                return res.render('landpads', { message: 'No matching landpad.', landpads: landpadArray, searchBy, searchVal });
+            }
+        })
+        .catch(function (error) {
+            res.json({ message: 'Data not found. Please try again later.' });
+        });
+});
 
 app.get('/launches', function (req, res) {
     axios.get('https://api.spacexdata.com/v5/launches')
@@ -746,71 +629,26 @@ app.get('/launches', function (req, res) {
 });
 
 // Return a single launch by ID
-// app.get('/launches/:id', function (req, res) {
-//     axios.get('https://api.spacexdata.com/v5/launches')
-//         .then(function (response) {
-//             // handle success
-//             let found = false;
-
-//             for (let i in response.data) {
-//                 let launch = response.data[i];
-
-//                 if (launch.id === req.params.id) {
-//                     res.json({ data: response.data[i] });
-//                     found = true;
-//                 }
-//             }
-//             if (!found) {
-//                 res.json({ data: 'Launch does not exist.' });
-//             }
-//         })
-//         .catch(function (error) {
-//             res.json({ message: 'Data not found. Please try again later.' });
-//         });
-// });
-
-// Return launches by Parameter
-app.get('/launches/*', function (req, res) {
-    axios.get('https://api.spacexdata.com/v4/launches')
+app.get('/launches/:id', function (req, res) {
+    axios.get('https://api.spacexdata.com/v5/launches')
         .then(function (response) {
+            // handle success
+            let found = false;
 
-            // run a for loop to search based on the key from req.params
-            const launchArray = [];
             for (let i in response.data) {
                 let launch = response.data[i];
-                let userRequest = req.params['0'].split('/'); // ['serial', 'c103'] ['reuse_count', '0']
-                
-                if(userRequest[0].toLowerCase() === 'name') { // search by name
-                    if(launch.name.toUpperCase() === userRequest[1].toUpperCase()) {
-                        return res.json({ launch });
-                    }
-                } else if(userRequest[0].toLowerCase() === 'id') { // search by id
-                    if(launch.id.toUpperCase() === userRequest[1].toUpperCase()) {
-                        return res.json({ launch });
-                    }
-                } else if(userRequest[0].toLowerCase() === 'region') { // search by region
-                    if(launch.region.toUpperCase() === userRequest[1].toUpperCase()) {
-                        return res.json({ launch });
-                    }
-                } else if (userRequest[0].toLowerCase() === 'flight_number') { // search by flight_number
-                    let flightNumber = parseInt(userRequest[1]);
-                    if (launch.flight_number === flightNumber) {
-                        launchArray.push(launch);
-                    }
-                } else if (userRequest[0].toLowerCase() === 'success') { // search by success
-                    if ((launch.success === true && userRequest[1].toLowerCase() === 'true') || (launch.success === false && userRequest[1].toLowerCase() === 'false')) {
-                        launchArray.push(launch);
-                    }
-                } else {
-                    return res.json({ message: 'Invalid key.' });
+
+                if (launch.id === req.params.id) {
+                    res.json({ data: response.data[i] });
+                    found = true;
                 }
             }
-            
-            if (launchArray.length > 0) {
-                return res.json({ launches: launchArray });
-            } else {
-                return res.json({ message: 'No matching launches.' });
+            if (!found) {
+                res.json({ data: 'Launch does not exist.' });
             }
+        })
+        .catch(function (error) {
+            res.json({ message: 'Data not found. Please try again later.' });
         });
 });
 
@@ -826,71 +664,26 @@ app.get('/launchpads', function (req, res) {
 });
 
 // Return a single launchpad by ID
-// app.get('/launchpads/:id', function (req, res) {
-//     axios.get('https://api.spacexdata.com/v4/launchpads')
-//         .then(function (response) {
-//             // handle success
-//             let found = false;
-
-//             for (let i in response.data) {
-//                 let launchpad = response.data[i];
-
-//                 if (launchpad.id === req.params.id) {
-//                     res.json({ data: response.data[i] });
-//                     found = true;
-//                 }
-//             }
-//             if (!found) {
-//                 res.json({ data: 'Launchpad does not exist.' });
-//             }
-//         })
-//         .catch(function (error) {
-//             res.json({ message: 'Data not found. Please try again later.' });
-//         });
-// });
-
-// Return launchpads by Parameter
-app.get('/launchpads/*', function (req, res) {
+app.get('/launchpads/:id', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/launchpads')
         .then(function (response) {
+            // handle success
+            let found = false;
 
-            // run a for loop to search based on the key from req.params
-            const launchpadArray = [];
             for (let i in response.data) {
                 let launchpad = response.data[i];
-                let userRequest = req.params['0'].split('/'); // ['serial', 'c103'] ['reuse_count', '0']
-                
-                if(userRequest[0].toLowerCase() === 'full_name') { // search by full_name
-                    if(launchpad.full_name.toUpperCase() === userRequest[1].toUpperCase()) {
-                        return res.json({ launchpad });
-                    }
-                } else if(userRequest[0].toLowerCase() === 'id') { // search by id
-                    if(launchpad.id.toUpperCase() === userRequest[1].toUpperCase()) {
-                        return res.json({ launchpad });
-                    }
-                } else if(userRequest[0].toLowerCase() === 'region') { // search by region
-                    if(launchpad.region.toUpperCase() === userRequest[1].toUpperCase()) {
-                        return res.json({ launchpad });
-                    }
-                }else if (userRequest[0].toLowerCase() === 'launch_attempts') { // search by launch_attempts
-                    let launchAttempts = parseInt(userRequest[1]);
-                    if (launchpad.launch_attempts === launchAttempts) {
-                        launchpadArray.push(launchpad);
-                    }
-                } else if (userRequest[0].toLowerCase() === 'status') { // search by status
-                    if (launchpad.status.toUpperCase() === userRequest[1].toUpperCase()) {
-                        launchpadArray.push(launchpad);
-                    }
-                } else {
-                    return res.json({ message: 'Invalid key.' });
+
+                if (launchpad.id === req.params.id) {
+                    res.json({ data: response.data[i] });
+                    found = true;
                 }
             }
-            
-            if (launchpadArray.length > 0) {
-                return res.json({ launchpads: launchpadArray });
-            } else {
-                return res.json({ message: 'No matching launchpads.' });
+            if (!found) {
+                res.json({ data: 'Launchpad does not exist.' });
             }
+        })
+        .catch(function (error) {
+            res.json({ message: 'Data not found. Please try again later.' });
         });
 });
 
@@ -951,8 +744,8 @@ app.get('/rockets', function (req, res) {
         });
 });
 
-// Return a rocket by Name
-app.get('/rockets/:name', function (req, res) {
+// Return a rocket by ID
+app.get('/rockets/:id', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/rockets')
         .then(function (response) {
             // handle success
@@ -961,7 +754,7 @@ app.get('/rockets/:name', function (req, res) {
             for (let i in response.data) {
                 let rocket = response.data[i];
 
-                if (rocket.name === req.params.name) {
+                if (rocket.id === req.params.id) {
                     res.json({ data: response.data[i] });
                     found = true;
                 }
@@ -986,8 +779,8 @@ app.get('/ships', function (req, res) {
         });
 });
 
-// Return a ship by Name
-app.get('/ships/:name', function (req, res) {
+// Return a ship by ID
+app.get('/ships/:id', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/ships')
         .then(function (response) {
             // handle success
@@ -996,7 +789,7 @@ app.get('/ships/:name', function (req, res) {
             for (let i in response.data) {
                 let ship = response.data[i];
 
-                if (ship.name === req.params.name) {
+                if (ship.id === req.params.id) {
                     res.json({ data: response.data[i] });
                     found = true;
                 }
@@ -1021,7 +814,7 @@ app.get('/starlink', function (req, res) {
         });
 });
 
-// Return a single payload by ID
+// Return a single starlink by ID
 app.get('/starlink/:id', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/starlink')
         .then(function (response) {

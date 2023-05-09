@@ -3,19 +3,22 @@
       <div class="columns is-desktop is-justify-content-center">
          <div class="column is-8-desktop">
             <div class="p-6 shadow rounded content">
-                <h2 class="section-title">Search Dragons</h2>
-                <form method="POST" action="/dragons/search">
+                <h2 class="section-title">Search Landpads</h2>
+                <form method="POST" action="/landpads/search">
                     <div class="columns is-multiline">
                         <div class="form-group column is-12">
                             <label for="category">Search By</label>
                             <select id="category" class="input custom-select" name="category" required>
                                 <option selected disabled>Choose Category</option>
                                 <option value="name">Name</option>
+                                <option value="full_name">Full Name</option>
+                                <option value="description">Description</option>
                                 <option value="type">Type</option>
-                                <option value="active">Active</option>
-                                <option value="first_flight">First Flight</option>
-                                <option value="crew_capacity">Crew Capacity</option>
-                                <option value="orbit_duration_yr">Orbit Duration</option>
+                                <option value="status">Status</option>
+                                <option value="locality">Locality</option>
+                                <option value="landing_attempts">Landing Attempts</option>
+                                <option value="landing_successes">Landing Successes</option>
+                                <option value="launch">Launch</option>
                                 <option value="id">ID</option>
                             </select>
                         </div>

@@ -4,13 +4,13 @@
       <!-- sidebar -->
       <div class="column is-3-desktop is-12-tablet">
         <ul class="sidenav">
-          <li title="dragons" class="sidelist parent active">
-            <a href="/dragons">Dragons</a>
+          <li class="sidelist parent active">
+            <a href="/landpads">Landpads</a>
             <ul>
-              <% dragons.forEach((dragon)=> { %>
+              <% landpads.forEach((landpad)=> { %>
                 <li class="sidelist">
-                  <a href="/dragons/<%= dragon.id %>">
-                    <%= dragon.name %>
+                  <a href="/landpads/<%= landpad.id %>">
+                    <%= landpad.name %>
                   </a>
                 </li>
               <% }); %>
@@ -25,8 +25,8 @@
           <li class="sidelist">
             <a href="/crew">Crew</a>
           </li>
-          <li class="sidelist">
-            <a href="/landpads">Landpads</a>
+          <li title="dragons" class="sidelist">
+            <a href="/dragons">Dragons</a>
           </li>
           <li class="sidelist">
             <a href="/launches">Launches</a>
@@ -55,24 +55,28 @@
       <!-- body -->
       <div class="column is-8-desktop is-12-tablet">
         <div class="px-4">
-          <h2 class="mb-4 has-text-weight-medium">Dragons</h2> <!-- main content -->
+          <h2 class="mb-4 has-text-weight-medium">Landpads</h2>
           <div class="content">
-            <% dragons.forEach((dragon)=> { %>
+            <% landpads.forEach((landpad)=> { %>
               <div class="card">
                 <div class="card-content">
                   <div class="content">
-                    <p><img src="<%= dragon.flickr_images[0] %>" alt="<%= dragon.name %>"></p>
-                    <p><strong><a href="/dragons/<%= dragon.id %>">
-                          <%= dragon.name %>
+                    <p><img src="<%= landpad.images.large[0] %>" alt="<%= landpad.name %>"></p>
+                    <p><strong><a href="/landpads/<%= landpad.id %>">
+                          <%= landpad.name %>
                         </a></strong></p>
                     <div class="mt-5">
-                      <%= dragon.description %>
+                      <%= landpad.details %>
                     </div>
                   </div>
                 </div>
               </div>
               <hr />
             <% }); %>
+
+            <% if (landpads.length === 0) { %>
+               <p><%= message %></p>
+            <% } %>
           </div>
         </div>
       </div>

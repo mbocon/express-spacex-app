@@ -73,6 +73,10 @@
               </div>
               <hr />
             <% }); %>
+
+            <% if (dragons.length === 0) { %>
+               <p><%= message %></p>
+            <% } %>
           </div>
         </div>
       </div>
