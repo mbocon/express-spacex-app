@@ -1232,17 +1232,6 @@ app.get('/ships/:id', function (req, res) {
         });
 });
 
-app.get('/starlink', function (req, res) {
-    axios.get('https://api.spacexdata.com/v4/starlink')
-        .then(function (response) {
-            // handle success
-            res.json({ data: response.data });
-        })
-        .catch(function (error) {
-            res.json({ message: 'Data not found. Please try again later.' });
-        });
-});
-
 app.post('/ships/search', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/ships')
         .then(function (response) {
@@ -1325,6 +1314,21 @@ app.post('/ships/search', function (req, res) {
         });
 });
 
+app.get('/starlink', function (req, res) {
+    axios.get('https://api.spacexdata.com/v4/starlink')
+        .then(function (response) {
+            // handle success
+            return res.render('starlink', { starlink: response.data });
+        })
+        .catch(function (error) {
+            return res.json({ message: 'Data not found. Please try again later.' });
+        });
+});
+
+app.get('/starlink/search', function (req, res) {
+    return res.render('starlink/search');
+});
+
 // Return a single starlink by ID
 app.get('/starlink/:id', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/starlink')
@@ -1336,12 +1340,80 @@ app.get('/starlink/:id', function (req, res) {
                 let satellite = response.data[i];
 
                 if (satellite.id === req.params.id) {
-                    res.json({ data: response.data[i] });
+                    return res.render('single-starlink', { sat: response.data[i], starlink: response.data });
                     found = true;
                 }
             }
             if (!found) {
-                res.json({ data: 'Satellite does not exist.' });
+                return res.json('starlink', { message: 'Satellite does not exist.' });
+            }
+        })
+        .catch(function (error) {
+            return res.json({ message: 'Data not found. Please try again later.' });
+        });
+});
+
+app.post('/starlink/search', function (req, res) {
+    axios.get('https://api.spacexdata.com/v4/starlink')
+        .then(function (response) {
+
+            let searchBy = req.body.category;
+            let searchVal = req.body.item;
+            let starlinkArray = [];
+
+            if(searchBy.toUpperCase() === 'OBJECT_NAME') { // search by OBJECT_NAME
+                starlinkArray = response.data.filter((starlink) => {
+                    return starlink.spaceTrack.OBJECT_NAME && starlink.spaceTrack.OBJECT_NAME.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'launch') { // search by launch
+                starlinkArray = response.data.filter((starlink) => {
+                    return starlink.launch && starlink.launch.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'version') { // search by version
+                starlinkArray = response.data.filter((starlink) => {
+                    return starlink.version && starlink.version.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'id') { // search by id
+                starlinkArray = response.data.filter((starlink) => {
+                    return starlink.id && starlink.id.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if(searchBy.toUpperCase() === 'CREATION_DATE') { // search by CREATION_DATE
+                starlinkArray = response.data.filter((starlink) => {
+                    return starlink.spaceTrack.CREATION_DATE && starlink.spaceTrack.CREATION_DATE.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if(searchBy.toUpperCase() === 'LAUNCH_DATE') { // search by LAUNCH_DATE
+                starlinkArray = response.data.filter((starlink) => {
+                    return starlink.spaceTrack.LAUNCH_DATE && starlink.spaceTrack.LAUNCH_DATE.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if(searchBy.toUpperCase() === 'DECAY_DATE') { // search by DECAY_DATE
+                starlinkArray = response.data.filter((starlink) => {
+                    return starlink.spaceTrack.DECAY_DATE && starlink.spaceTrack.DECAY_DATE.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if(searchBy.toUpperCase() === 'COUNTRY_CODE') { // search by COUNTRY_CODE
+                starlinkArray = response.data.filter((starlink) => {
+                    return starlink.spaceTrack.COUNTRY_CODE && starlink.spaceTrack.COUNTRY_CODE.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if(searchBy.toUpperCase() === 'CENTER_NAME') { // search by CENTER_NAME
+                starlinkArray = response.data.filter((starlink) => {
+                    return starlink.spaceTrack.CENTER_NAME && starlink.spaceTrack.CENTER_NAME.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if(searchBy.toUpperCase() === 'SITE') { // search by SITE
+                starlinkArray = response.data.filter((starlink) => {
+                    return starlink.spaceTrack.SITE && starlink.spaceTrack.SITE.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else {
+                return res.render('starlink', { starlink: starlinkArray, message: 'Invalid key.', searchBy, searchVal });
+            }
+            
+
+            if (starlinkArray.length > 0) {
+                if (starlinkArray.length === 1) {
+                    return res.redirect(`/starlink/${starlinkArray[0].id}`);
+                } else {
+                    return res.render('starlink', { message: '', starlink: starlinkArray, searchBy, searchVal });
+                }
+            } else {
+                return res.render('starlink', { message: 'No matching starlink.', starlink: starlinkArray, searchBy, searchVal });
             }
         })
         .catch(function (error) {
