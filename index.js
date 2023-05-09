@@ -672,7 +672,7 @@ app.post('/launches/search', function (req, res) {
             } else if(searchBy.toLowerCase() === 'flight_number') { // search by flight_number
                 launchArray = response.data.filter((launch) => {
                     let countValue = parseInt(searchVal);
-                    return launch.flight_number.toUpperCase() === countValue.toUpperCase();
+                    return launch.flight_number === countValue;
                 });
             } else if(searchBy.toLowerCase() === 'id') { // search by id
                 launchArray = response.data.filter((launch) => {
@@ -786,11 +786,15 @@ app.get('/launchpads', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/launchpads')
         .then(function (response) {
             // handle success
-            res.json({ data: response.data });
+            return res.render('launchpads', { launchpads: response.data });
         })
         .catch(function (error) {
-            res.json({ message: 'Data not found. Please try again later.' });
+            return res.json({ message: 'Data not found. Please try again later.' });
         });
+});
+
+app.get('/launchpads/search', function (req, res) {
+    return res.render('launchpads/search');
 });
 
 // Return a single launchpad by ID
@@ -804,16 +808,106 @@ app.get('/launchpads/:id', function (req, res) {
                 let launchpad = response.data[i];
 
                 if (launchpad.id === req.params.id) {
-                    res.json({ data: response.data[i] });
+                    return res.render('single-launchpad', { launchpad: response.data[i], launchpads: response.data });
                     found = true;
                 }
             }
             if (!found) {
-                res.json({ data: 'Launchpad does not exist.' });
+                return res.json({ data: 'Launchpad does not exist.' });
             }
         })
         .catch(function (error) {
-            res.json({ message: 'Data not found. Please try again later.' });
+            return res.json({ message: 'Data not found. Please try again later.' });
+        });
+});
+
+app.post('/launchpads/search', function (req, res) {
+    axios.get('https://api.spacexdata.com/v4/launchpads')
+        .then(function (response) {
+
+            let searchBy = req.body.category;
+            let searchVal = req.body.item;
+            let launchpadArray = [];
+
+            if(searchBy.toLowerCase() === 'name') { // search by name
+                launchpadArray = response.data.filter((launchpad) => {
+                    return launchpad.name.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if(searchBy.toLowerCase() === 'full_name') { // search by full_name
+                launchpadArray = response.data.filter((launchpad) => {
+                    return launchpad.full_name.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if(searchBy.toLowerCase() === 'id') { // search by id
+                launchpadArray = response.data.filter((launchpad) => {
+                    return launchpad.id.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'description') { // search by description
+                launchpadArray = response.data.filter((launchpad) => {
+                    return launchpad.description && launchpad.description.toUpperCase().trim() === searchVal.toUpperCase().trim();
+                });
+            } else if (searchBy.toLowerCase() === 'status') { // search by status
+                launchpadArray = response.data.filter((launchpad) => {
+                    return launchpad.status.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'locality') { // search by locality
+                launchpadArray = response.data.filter((launchpad) => {
+                    return launchpad.locality.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'region') { // search by region
+                launchpadArray = response.data.filter((launchpad) => {
+                    return launchpad.region.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'timezone') { // search by timezone
+                launchpadArray = response.data.filter((launchpad) => {
+                    return launchpad.timezone.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'launch_attempts') { // search by launch_attempts
+                let countValue = parseInt(searchVal);
+                launchpadArray = response.data.filter((launchpad) => {
+                    return launchpad.launch_attempts === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'launch_successes') { // search by launch_successes
+                let countValue = parseInt(searchVal);
+                launchpadArray = response.data.filter((launchpad) => {
+                    return launchpad.launch_successes === countValue;
+                });
+            } else if (searchBy.toLowerCase() === 'launch') { // search by launch
+                launchpadArray = response.data.filter((launchpad) => {
+                    let found = false;
+                    launchpad.launches.forEach((launch) => {
+                        if (launch.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else if (searchBy.toLowerCase() === 'rocket') { // search by rocket
+                launchpadArray = response.data.filter((launchpad) => {
+                    let found = false;
+                    launchpad.rockets.forEach((rocket) => {
+                        if (rocket.toUpperCase() === searchVal.toUpperCase()) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+            } else {
+                return res.render('launchpads', { launchpads: launchpadArray, message: 'Invalid key.', searchBy, searchVal });
+            }
+            
+
+            if (launchpadArray.length > 0) {
+                if (launchpadArray.length === 1) {
+                    return res.redirect(`/launchpads/${launchpadArray[0].id}`);
+                } else {
+                    return res.render('launchpads', { message: '', launchpads: launchpadArray, searchBy, searchVal });
+                }
+            } else {
+                return res.render('launchpads', { message: 'No matching launchpad.', launchpads: launchpadArray, searchBy, searchVal });
+            }
+        })
+        .catch(function (error) {
+            return res.json({ message: 'Data not found. Please try again later.' });
         });
 });
 

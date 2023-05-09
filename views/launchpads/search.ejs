@@ -1,0 +1,41 @@
+<section class="section">
+   <div class="container">
+      <div class="columns is-desktop is-justify-content-center">
+         <div class="column is-8-desktop">
+            <div class="p-6 shadow rounded content">
+                <h2 class="section-title">Search Launchpads</h2>
+                <form method="POST" action="/launchpads/search">
+                    <div class="columns is-multiline">
+                        <div class="form-group column is-12">
+                            <label for="category">Search By</label>
+                            <select id="category" class="input custom-select" name="category" required>
+                                <option selected disabled>Choose Category</option>
+                                <option value="name">Name</option>
+                                <option value="full_name">Full Name</option>
+                                <option value="description">Description</option>
+                                <option value="status">Status</option>
+                                <option value="locality">Locality</option>
+                                <option value="region">Region</option>
+                                <option value="timezone">Timezone</option>
+                                <option value="launch_attempts">Launch Attempts</option>
+                                <option value="launch_successes">Launch Successes</option>
+                                <option value="launch">Launch</option>
+                                <option value="rocket">Rocket</option>
+                                <option value="id">ID</option>
+                            </select>
+                        </div>
+                        <div class="form-group column is-6-desktop">
+                            <label for="item">Search For</label>
+                            <input type="text" class="input" id="item" name="item" placeholder="Search Term"
+                           required>
+                        </div>
+                        <div class="column is-12">
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </div>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   </div>
+</section>
