@@ -1077,7 +1077,91 @@ app.get('/rockets', function (req, res) {
     axios.get('https://api.spacexdata.com/v4/rockets')
         .then(function (response) {
             // handle success
-            res.json({ data: response.data });
+            return res.render('rockets', { rockets: response.data });
+        })
+        .catch(function (error) {
+            return res.json({ message: 'Data not found. Please try again later.' });
+        });
+});
+
+app.get('/rockets/search', function (req, res) {
+    return res.render('rockets/search');
+});
+
+app.post('/rockets/search', function (req, res) {
+    axios.get('https://api.spacexdata.com/v4/rockets')
+        .then(function (response) {
+
+            let searchBy = req.body.category;
+            let searchVal = req.body.item;
+            let rocketArray = [];
+
+            if(searchBy.toLowerCase() === 'name') { // search by name
+                rocketArray = response.data.filter((rocket) => {
+                    return rocket.name.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if(searchBy.toLowerCase() === 'id') { // search by id
+                rocketArray = response.data.filter((rocket) => {
+                    return rocket.id.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'description') { // search by description
+                rocketArray = response.data.filter((rocket) => {
+                    return rocket.description.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'active') { // search by active
+                rocketArray = response.data.filter((rocket) => {
+                    return ((rocket.active === true && searchVal.toUpperCase() === 'TRUE') || (rocket.active === false && searchVal.toUpperCase() === 'FALSE'));
+                });
+            } else if (searchBy.toLowerCase() === 'type') { // search by type
+                rocketArray = response.data.filter((rocket) => {
+                    return rocket.type.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'stages') { // search by stages
+                searchVal = parseInt(searchVal);
+                rocketArray = response.data.filter((rocket) => {
+                    return rocket.stages === searchVal;
+                });
+            } else if (searchBy.toLowerCase() === 'boosters') { // search by boosters
+                searchVal = parseInt(searchVal);
+                rocketArray = response.data.filter((rocket) => {
+                    return rocket.boosters === searchVal;
+                });
+            } else if (searchBy.toLowerCase() === 'cost_per_launch') { // search by cost_per_launch
+                searchVal = parseInt(searchVal);
+                rocketArray = response.data.filter((rocket) => {
+                    return rocket.cost_per_launch === searchVal;
+                });
+            } else if (searchBy.toLowerCase() === 'success_rate_pct') { // search by success_rate_pct
+                searchVal = parseInt(searchVal);
+                rocketArray = response.data.filter((rocket) => {
+                    return rocket.success_rate_pct === searchVal;
+                });
+            } else if (searchBy.toLowerCase() === 'first_flight') { // search by first_flight
+                rocketArray = response.data.filter((rocket) => {
+                    return rocket.first_flight && rocket.first_flight.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'country') { // search by country
+                rocketArray = response.data.filter((rocket) => {
+                    return rocket.country && rocket.country.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else if (searchBy.toLowerCase() === 'company') { // search by company
+                rocketArray = response.data.filter((rocket) => {
+                    return rocket.company && rocket.company.toUpperCase() === searchVal.toUpperCase();
+                });
+            } else {
+                return res.render('rockets', { rockets: rocketArray, message: 'Invalid key.', searchBy, searchVal });
+            }
+            
+
+            if (rocketArray.length > 0) {
+                if (rocketArray.length === 1) {
+                    return res.redirect(`/rockets/${rocketArray[0].id}`);
+                } else {
+                    return res.render('rockets', { message: '', rockets: rocketArray, searchBy, searchVal });
+                }
+            } else {
+                return res.render('rockets', { message: 'No matching rocket.', rockets: rocketArray, searchBy, searchVal });
+            }
         })
         .catch(function (error) {
             res.json({ message: 'Data not found. Please try again later.' });
@@ -1095,12 +1179,12 @@ app.get('/rockets/:id', function (req, res) {
                 let rocket = response.data[i];
 
                 if (rocket.id === req.params.id) {
-                    res.json({ data: response.data[i] });
+                    return res.render('single-rocket', { rocket: response.data[i], rockets: response.data });
                     found = true;
                 }
             }
             if (!found) {
-                res.json({ data: 'Rocket does not exist.' });
+                return res.render('rockets', { data: 'Rocket does not exist.' });
             }
         })
         .catch(function (error) {

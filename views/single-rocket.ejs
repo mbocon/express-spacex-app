@@ -1,0 +1,176 @@
+<section class="pt-6">
+    <div class="container shadow section-sm rounded">
+        <div class="columns is-multiline">
+            <!-- sidebar -->
+            <div class="column is-3-desktop is-12-tablet">
+                <ul class="sidenav">
+                    <li title="rockets" class="sidelist parent active">
+                        <a href="/rockets">Rockets</a>
+                        <ul>
+                            <li class="sidelist parent active">
+                                <a href="/rockets/<%= rocket.id %>"><%= rocket.name %></a>
+                            </li>
+                            <% rockets.forEach((roc)=> { %>
+                                <% if (roc.name !== rocket.name) { %>
+                                    <li class="sidelist">
+                                        <a href="/rockets/<%= roc.id %>"><%= roc.name %></a>
+                                    </li>
+                                <% } %>
+                            <% }); %>
+                        </ul>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/capsules">Capsules</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/cores">Cores</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/crew">Crew</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/dragons">Dragons</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/landpads">Landpads</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/launches">Launches</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/launchpads">Launchpads</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/roadster">Roadster</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/rockets">Rockets</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/ships">Ships</a>
+                    </li>
+                    <li class="sidelist">
+                        <a href="/starlink">Starlink</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="column is-8-desktop is-12-tablet">
+                <div class="px-4">
+                    <h2 class="mb-4 has-text-weight-medium">Single Rocket</h2>
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="content">
+                                <p class="i-5">
+                                    <div class="card">
+                                        <div class="card-image">
+                                            <figure class="image is-4by3">
+                                                <img src="<%= rocket.flickr_images[0] %>" alt="rocket">
+                                            </figure>
+                                        </div>
+                                        <div class="card-content">
+                                            <div class="media">
+                                                <div class="media-content">
+                                                    <p class="title is-4"><%= rocket.name %></p>
+                                                    <p class="subtitle is-6">
+                                                        <section>
+                                                            <p class="subtitle is-size-6">
+                                                                <%= rocket.description %>
+                                                            </p>
+                                                        </section>
+                                                        <span class="has-text-weight-medium"><a href="<%= rocket.wikipedia %>">Wikipedia</a></span><br />
+                                                        <br />
+                                                        <span class="has-text-weight-medium">Images:</span><br />
+                                                            <ul class="is-unstyled">
+                                                                <% rocket.flickr_images.forEach((i) => { %>
+                                                                    <li><a href="<%= i %>">image</a></li>
+                                                                <% }); %>
+                                                            </ul>
+                                                        <br />
+                                                        <span class="has-text-weight-medium">Type: </span><%= rocket.type %><br />
+                                                        <span class="has-text-weight-medium">Active: </span><%= rocket.active %><br />
+                                                        <span class="has-text-weight-medium">Stages: </span><%= rocket.stages %><br />
+                                                        <span class="has-text-weight-medium">Boosters: </span><%= rocket.boosters %><br />
+                                                        <span class="has-text-weight-medium">Cost Per Launch: </span><%= rocket.cost_per_launch %><br />
+                                                        <span class="has-text-weight-medium">Success Rate (%): </span><%= rocket.success_rate_pct %><br />
+                                                        <span class="has-text-weight-medium">First Flight: </span><%= rocket.first_flight %><br />
+                                                        <span class="has-text-weight-medium">Country: </span><%= rocket.country %><br />
+                                                        <span class="has-text-weight-medium">Company: </span><%= rocket.company %><br />
+                                                        <br />
+                                                        <span class="has-text-weight-medium">Height (m/ft): </span><%= rocket.height.meters %>/ <%= rocket.height.feet %><br />
+                                                        <span class="has-text-weight-medium">Diameter (m/ft): </span><%= rocket.diameter.meters %>/ <%= rocket.diameter.feet %><br />
+                                                        <span class="has-text-weight-medium">Mass (kg/lb): </span><%= rocket.mass.kg %>/ <%= rocket.mass.lb %><br />
+                                                        <br />
+                                                        <span class="has-text-weight-medium">First Stage:</span><br />
+                                                        <ul class="is-unstyled">
+                                                            <li>Thrust Sea Level (kN/lbf): <%= rocket.first_stage.thrust_sea_level.kN %>/<%= rocket.first_stage.thrust_sea_level.lbf %></li>
+                                                            <li>Thrust Vacuum (kN/lbf): <%= rocket.first_stage.thrust_vacuum.kN %>/<%= rocket.first_stage.thrust_vacuum.lbf %></li>
+                                                            <li>Reusable: <%= rocket.first_stage.reusable %></li>
+                                                            <li>Engines: <%= rocket.first_stage.engines %></li>
+                                                            <li>Fuel Amount (tons): <%= rocket.first_stage.fuel_amount_tons %></li>
+                                                            <li>Burn Time (sec): <%= rocket.first_stage.burn_time_sec %></li>
+                                                        </ul>
+                                                        <span class="has-text-weight-medium">Second Stage:</span><br />
+                                                        <ul class="is-unstyled">
+                                                            <li>Thrust (kN/lbf): <%= rocket.second_stage.thrust.kN %>/<%= rocket.second_stage.thrust.lbf %></li>
+                                                            <li>Reusable: <%= rocket.second_stage.reusable %></li>
+                                                            <li>Engines: <%= rocket.second_stage.engines %></li>
+                                                            <li>Fuel Amount (tons): <%= rocket.second_stage.fuel_amount_tons %></li>
+                                                            <li>Burn Time (sec): <%= rocket.second_stage.burn_time_sec %></li>
+                                                                Payloads:
+                                                                <ul class="is-unstyled">
+                                                                    <li>
+                                                                        Composite Fairing:
+                                                                        <ul class="is-unstyled">
+                                                                            <li>Height (m/ft): <%= rocket.second_stage.payloads.composite_fairing.height.meters %>/<%= rocket.second_stage.payloads.composite_fairing.height.feet %></li>
+                                                                            <li>Diameter (m/ft): <%= rocket.second_stage.payloads.composite_fairing.diameter.meters %>/<%= rocket.second_stage.payloads.composite_fairing.diameter.feet %></li>
+                                                                        </ul>
+                                                                    </li>
+                                                                    <li>Option 1: <%= rocket.second_stage.payloads.option_1 %></li>
+                                                                </ul>
+                                                            </li>
+                                                        </ul>
+                                                        <span class="has-text-weight-medium">Engines:</span><br />
+                                                        <ul class="is-unstyled">
+                                                            <li>ISP (sea level/vacuum): <%= rocket.engines.isp.sea_level %>/<%= rocket.engines.isp.vacuum %></li>
+                                                            <li>Thrust Sea Level (kN/lbf): <%= rocket.engines.thrust_sea_level.kN %>/<%= rocket.engines.thrust_sea_level.lbf %></li>
+                                                            <li>Thrust Vacuum (kN/lbf): <%= rocket.engines.thrust_vacuum.kN %>/<%= rocket.engines.thrust_vacuum.lbf %></li>
+                                                            <li>Number: <%= rocket.engines.number %></li>
+                                                            <li>Type: <%= rocket.engines.type %></li>
+                                                            <li>Version: <%= rocket.engines.version %></li>
+                                                            <li>Layout: <%= rocket.engines.layout %></li>
+                                                            <li>Engine Loss Max: <%= rocket.engines.engine_loss_max %></li>
+                                                            <li>Propellant 1: <%= rocket.engines.propellant_1 %></li>
+                                                            <li>Propellant 2: <%= rocket.engines.propellant_2 %></li>
+                                                            <li>Thrust To Weight: <%= rocket.engines.thrust_to_weight %></li>
+                                                        </ul>
+                                                        <span class="has-text-weight-medium">Landing Legs:</span><br />
+                                                        <ul class="is-unstyled">
+                                                            <li>Number: <%= rocket.landing_legs.number %></li>
+                                                            <li>Material: <%= rocket.landing_legs.material %></li>
+                                                        </ul>
+                                                        <span class="has-text-weight-medium">Payload Weights:</span><br />
+                                                        <ul class="is-unstyled">
+                                                            <% rocket.payload_weights.forEach((weight) => { %>
+                                                                <li>
+                                                                    <ul class="is-unstyled">
+                                                                        <li><%= weight.name %></li>
+                                                                        <li>Weight (kg/lb): <%= weight.kg %>/<%= weight.lb %><br /><br /></li>
+                                                                    </ul>
+                                                                </li>
+                                                            <% }); %>
+                                                        </ul>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p>
+                            </div>
+                        </div>
+                    </div>       
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
