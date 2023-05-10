@@ -1,0 +1,15 @@
+<section class="section">
+   <div class="container">
+      <div class="columns is-justify-content-center">
+         <div class="column is-8-desktop">
+            <h2 class="mb-5 has-text-weight-medium">Search <span class="text-primary"><%= category %></span> for <span class="text-primary"><%= item %></span></h2>
+            <div class="p-6 shadow rounded">
+               <div class="has-text-centered"><img class="img-fluid" src="/images/no-search-found.png">
+                  <h3>No <span class="text-primary"><%= search %></span> matching <span class="text-primary"><%= item %></span> found</h3>
+                  <a href="/<%= search %>/search" class="btn btn-sm btn-outline-primary ml-4 mt-4">Search Again</a>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</section>

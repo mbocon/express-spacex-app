@@ -859,7 +859,7 @@ app.post('/launchpads/search', function (req, res) {
                 });
             } else if (searchBy.toLowerCase() === 'timezone') { // search by timezone
                 launchpadArray = response.data.filter((launchpad) => {
-                    return launchpad.timezone.toUpperCase() === searchVal.toUpperCase();
+                    return launchpad.timezone.replace('_', ' ').toUpperCase().includes(searchVal.toUpperCase());
                 });
             } else if (searchBy.toLowerCase() === 'launch_attempts') { // search by launch_attempts
                 let countValue = parseInt(searchVal);
@@ -903,11 +903,13 @@ app.post('/launchpads/search', function (req, res) {
                     return res.render('launchpads', { message: '', launchpads: launchpadArray, searchBy, searchVal });
                 }
             } else {
-                return res.render('launchpads', { message: 'No matching launchpad.', launchpads: launchpadArray, searchBy, searchVal });
+                // return res.render('launchpads', { message: 'No matching launchpad.', launchpads: launchpadArray, searchBy, searchVal });
+                return res.render('no-result', { item: req.body.item, category: req.body.category, search: 'launchpads' });
             }
         })
         .catch(function (error) {
-            return res.json({ message: 'Data not found. Please try again later.' });
+            // return res.json({ message: 'Data not found. Please try again later.' });
+            return res.render('no-result', { item: req.body.item, category: req.body.category, search: 'launchpads' });
         });
 });
 
